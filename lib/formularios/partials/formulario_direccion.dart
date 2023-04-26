@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:demo_senderos/database/handler/database_helper.dart';
-import 'package:demo_senderos/database/models/formularios.dart';
+
 
 class FormularioDireccion extends StatefulWidget {
   const FormularioDireccion({super.key});
@@ -14,7 +13,7 @@ class FormularioDireccionState extends State<FormularioDireccion> {
   String _calle = '';
   int _numero = 0;
   String _colonia = '';
-  int _codigo_postal = 0;
+  int _codigoPostal = 0;
   String _estado = '';
 
   @override
@@ -70,7 +69,7 @@ class FormularioDireccionState extends State<FormularioDireccion> {
                 height: 10,
               ),
               TextFormField(
-                initialValue: _codigo_postal.toString(),
+                initialValue: _codigoPostal.toString(),
                 decoration: const InputDecoration(labelText: 'Código Postal'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
@@ -79,7 +78,7 @@ class FormularioDireccionState extends State<FormularioDireccion> {
                   }
                   return null;
                 },
-                onSaved: (value) => setState(() => _codigo_postal = int.parse(value!)),
+                onSaved: (value) => setState(() => _codigoPostal = int.parse(value!)),
               ),
               const SizedBox(
                 height: 10,
