@@ -5,7 +5,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
   final String? titleText;
-  const CustomAppBar({Key? key, this.titleText})
+  final bool? btnRegresar;
+  const CustomAppBar({Key? key, this.titleText, this.btnRegresar})
       : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -45,6 +46,7 @@ class CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: widget.btnRegresar ?? true,
       title: Text(widget.titleText ?? 'Flutter App'),
       actions: [
         SafeArea(
