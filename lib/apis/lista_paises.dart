@@ -18,7 +18,7 @@ class ListaPaisesState extends State<ListaPaises> {
   final dbHelper = DatabaseHelper.instance;
   late Future<List<Map<String, dynamic>>> _paisesFuture;
 
-  bool _hasConnection = false;
+  bool _hasConnection2 = false;
   late List data;
   var contenido;
   var _registros;
@@ -36,12 +36,12 @@ class ListaPaisesState extends State<ListaPaises> {
     setState(() {
       _registros = registros!;
     });
-    print(_registros);
+
   }
 
   Future<String> getData() async {
 
-    if (!_hasConnection) {
+    if (!_hasConnection2) {
     contenido = [];
     }else{
       var response = await http.get(
@@ -86,11 +86,11 @@ class ListaPaisesState extends State<ListaPaises> {
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       setState(() {
-        _hasConnection = true;
+        _hasConnection2 = true;
       });
     } else {
       setState(() {
-        _hasConnection = false;
+        _hasConnection2 = false;
       });
     }
     getData();
@@ -98,7 +98,7 @@ class ListaPaisesState extends State<ListaPaises> {
 
   @override
   Widget build(BuildContext context) {
-    return _hasConnection ?
+    return _hasConnection2 ?
     ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index){
