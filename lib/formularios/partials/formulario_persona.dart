@@ -1,6 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:demo_senderos/database/handler/database_helper.dart';
 
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+Future<List<String>> fetchPhotos(http.Client client) async {
+  final response = await client
+      .get(Uri.parse('https://restcountries.com/v3.1/all'));
+  // Use the compute function to run parsePhotos in a separate isolate.
+  //print(response.body);
+  final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
+  List paises=[];
+  //print(parsed);
+  var cont=0;
+  parsed.forEach((n) => {
+    ++cont,
+    if(cont<11){
+      //print(n["name"]["common"]),
+      paises.add(n["name"]["common"])
+    }
+  });
+
+  //print(paises);
+  return paises;
+  //return compute(parsePhotos, response.body);
+}
+
+// A function that converts a response body into a List<Photo>.
+/*List<Photo> parsePhotos(String responseBody) {
+  final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+  List paises=[];
+print(parsed);
+  var cont=0;
+  parsed.forEach((n) => {
+    ++cont,
+    if(cont<11){
+      print(n["name"]["common"]),
+      paises.add(n["name"]["common"])
+    }
+  });
+  print(paises);
+
+  return parsed.map<Photo>((json) => Photo.fromJson(json)).toList();
+}
+
+class Photo {
+  final int albumId;
+  final int id;
+  final String title;
+  final String url;
+  final String thumbnailUrl;
+
+  const Photo({
+    required this.albumId,
+    required this.id,
+    required this.title,
+    required this.url,
+    required this.thumbnailUrl,
+  });
+
+  factory Photo.fromJson(Map<String, dynamic> json) {
+    return Photo(
+      albumId: json['albumId'] as int,
+      id: json['id'] as int,
+      title: json['title'] as String,
+      url: json['url'] as String,
+      thumbnailUrl: json['thumbnailUrl'] as String,
+    );
+  }
+}*/
 
 class FormularioPersona extends StatefulWidget {
   const FormularioPersona({super.key});
@@ -16,9 +86,17 @@ class FormularioPersonaState extends State<FormularioPersona> {
   String _segundoApellido = '';
   int _edad = 0;
   String _genero = '';
+  String _pais = '';
+  List<String> paises = ['', 'Two', 'Three', 'Four'];
+  List<String> fotos = fetchPhotos(http.Client());
 
   @override
   Widget build(BuildContext context) {
+    print('aqui');
+    print(paises);
+    print('fotos');
+    print(fotos);
+
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -94,6 +172,19 @@ class FormularioPersonaState extends State<FormularioPersona> {
                     .toList(),
                 onChanged: (value) => setState(() => _genero = value!),
               ),
+
+              DropdownButtonFormField<String>(
+                value: _pais,
+                decoration: const InputDecoration(labelText: 'País de nacimiento'),
+                items: ['', 'Two', 'Three', 'Four']
+                    .map((label) => DropdownMenuItem(
+                  value: label,
+                  child: Text(label),
+                ))
+                    .toList(),
+
+                onChanged: (value) => setState(() => _pais = value!),
+              ),
               const SizedBox(
                 height: 10,
               ),
@@ -108,7 +199,6 @@ class FormularioPersonaState extends State<FormularioPersona> {
                       },
                     ),
                   );
-
 
                   if (_formKey.currentState != null &&
                       _formKey.currentState!.validate()) {
