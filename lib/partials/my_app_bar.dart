@@ -32,7 +32,9 @@ class CustomAppBarState extends State<CustomAppBar> {
   void _checkConnection() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
+        connectivityResult == ConnectivityResult.wifi ||
+        connectivityResult == ConnectivityResult.ethernet ||
+        connectivityResult == ConnectivityResult.other) {
       setState(() {
         _hasConnection = true;
       });

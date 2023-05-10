@@ -42,12 +42,12 @@ class ListaPaisesState extends State<ListaPaises> {
   Future<String> getData() async {
 
     if (!_hasConnection2) {
-    contenido = [];
+      contenido = [];
     }else{
       var response = await http.get(
           Uri.parse("https://restcountries.com/v3.1/region/america"),
           headers: {"Accept": "application/json"});
-     contenido =  json.decode(response.body);
+      contenido =  json.decode(response.body);
     }
     setState(() {
       data = contenido;
@@ -84,7 +84,9 @@ class ListaPaisesState extends State<ListaPaises> {
   void _checkConnection() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
+        connectivityResult == ConnectivityResult.wifi ||
+        connectivityResult == ConnectivityResult.ethernet ||
+        connectivityResult == ConnectivityResult.other) {
       setState(() {
         _hasConnection2 = true;
       });
