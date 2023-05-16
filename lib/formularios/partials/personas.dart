@@ -34,7 +34,8 @@ class _PersonasListState extends State<PersonasList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+
+    return _registros.length > 0 ? ListView.builder(
       itemCount: _registros.length,
       itemBuilder: (context, index) {
         var nombreCompleto = _registros[index][DatabaseHelper.columnNombre]+" "+_registros[index][DatabaseHelper.columnPrimerApellido]+" "+_registros[index][DatabaseHelper.columnSegundoApellido];
@@ -44,6 +45,10 @@ class _PersonasListState extends State<PersonasList> {
           subtitle: Text(datosComplementarios),
         );
       },
-    );
+    )
+    : const Center(
+      child: Text('No existen registros'),
+    )
+    ;
   }
 }

@@ -1,11 +1,20 @@
-import 'package:demo_senderos/formularios/modulo_direccion.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
+import 'package:demo_senderos/apis/api_paises.dart';
 import 'package:demo_senderos/formularios/modulo_persona.dart';
 import 'package:demo_senderos/partials/my_app_bar.dart';
-import 'package:flutter/material.dart';
 
-void main() {
+
+Future main() async {
+  if (Platform.isWindows) {
+    // Initialize FFI
+    ffi.sqfliteFfiInit();
+    // Change the default factory
+    databaseFactory = ffi.databaseFactoryFfi;
+  }
   runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
     title: 'Flutter App',
     home: MyApp(),
   ));
@@ -20,13 +29,12 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   void _routeFormularioPersona() { Navigator.of(context) .push(MaterialPageRoute(builder: (context) => ModuloPersona())); }
-  void _routeFormularioDireccion() { Navigator.of(context) .push(MaterialPageRoute(builder: (context) => ModuloDireccion())); }
-
+  void _routeApiPaises() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApiPaises())); }
   @override
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(titleText: 'HomePage',),
+      appBar: const CustomAppBar(titleText: 'HomePage', btnRegresar: false,),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -65,23 +73,24 @@ class _MyAppState extends State<MyApp> {
                   onTap: _routeFormularioPersona,
                 ),
               ),
+
               const SizedBox(
                 height: 10,
               ),
               Card(
                 child: ListTile(
                   title: const Text(
-                    'Formulario Ubicación',
+                    'Api Paises',
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5
                     ),),
                   leading: const Icon(
-                    Icons.add_location,
+                    Icons.flag_circle_sharp,
                     size: 25,
                   ),
-                  onTap: _routeFormularioDireccion,
+                  onTap: _routeApiPaises,
                 ),
               ),
             ],

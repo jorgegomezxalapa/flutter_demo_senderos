@@ -5,7 +5,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
   final String? titleText;
-  const CustomAppBar({Key? key, this.titleText})
+  final bool? btnRegresar;
+  const CustomAppBar({Key? key, this.titleText, this.btnRegresar})
       : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -31,7 +32,9 @@ class CustomAppBarState extends State<CustomAppBar> {
   void _checkConnection() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
+        connectivityResult == ConnectivityResult.wifi ||
+        connectivityResult == ConnectivityResult.ethernet ||
+        connectivityResult == ConnectivityResult.other) {
       setState(() {
         _hasConnection = true;
       });
@@ -45,6 +48,7 @@ class CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: widget.btnRegresar ?? true,
       title: Text(widget.titleText ?? 'Flutter App'),
       actions: [
         SafeArea(
