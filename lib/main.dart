@@ -1,10 +1,13 @@
 import 'dart:io' show Platform;
+import 'package:demo_senderos/apis/inspecciones.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
 import 'package:demo_senderos/apis/api_paises.dart';
 import 'package:demo_senderos/formularios/modulo_persona.dart';
 import 'package:demo_senderos/partials/my_app_bar.dart';
+
+import 'apis/bandeja_inspecciones.dart';
 
 
 Future main() async {
@@ -20,6 +23,61 @@ Future main() async {
   ));
 }
 
+/*
+//clase de cada elemento de la tabla
+class ComidaItem{
+  final String name;
+  final int calories;
+
+  ComidaItem(this.name, this.calories);
+}
+
+//valores de la lista
+final List<ComidaItem> _comidasList = [
+  ComidaItem("Yogurt", 87),
+  ComidaItem("Hamburguesa de macdonals", 1500),
+  ComidaItem("Hamburguesa BK", 1200),
+  ComidaItem("Sandia", 100),
+  ComidaItem("Galletas", 300),
+];
+
+//widget de la tabla
+Widget _buildTable({bool sortAscending = true}){
+  return DataTable(
+    sortColumnIndex: 0,
+      sortAscending: sortAscending,
+      onSelectAll: (value) {},
+      columns: <DataColumn>[
+         const DataColumn(
+            label: Text('Nombre'),
+            tooltip: 'Nombre'
+        ),
+        DataColumn(
+            label: const Text('Calorias'),
+          tooltip: 'Calorias',
+          numeric: true,
+          onSort: (int columnIndex, bool ascending) {},
+        )
+      ],
+      rows: _comidasList.map<DataRow>((ComidaItem comidaItem){
+        return DataRow(
+          //key: Key(comidaItem.name),
+          onSelectChanged: (selected) {},
+          cells:<DataCell>[
+            DataCell(
+              Text(comidaItem.name)
+            ),
+          DataCell(
+            Text('${comidaItem.calories}'),
+            showEditIcon: true,
+            onTap: () {},
+          )
+          ],
+        );
+      }).toList(),
+  );
+}
+*/
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -30,6 +88,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   void _routeFormularioPersona() { Navigator.of(context) .push(MaterialPageRoute(builder: (context) => ModuloPersona())); }
   void _routeApiPaises() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApiPaises())); }
+  void _routeInspecciones() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => InspeccionesService())); }
+  void _routeInspeccionesDataTables() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => BanddejaInspecciones())); }
   @override
 
   Widget build(BuildContext context) {
@@ -93,6 +153,47 @@ class _MyAppState extends State<MyApp> {
                   onTap: _routeApiPaises,
                 ),
               ),
+              const SizedBox(
+                height: 10,
+              ),
+              Card(
+                child: ListTile(
+                  title: const Text(
+                    'Inspecciones',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5
+                    ),),
+                  leading: const Icon(
+                    Icons.flag_circle_sharp,
+                    size: 25,
+                  ),
+                  onTap: _routeInspecciones,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Card(
+                child: ListTile(
+                  title: const Text(
+                    'Inspecciones Datatables',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5
+                    ),),
+                  leading: const Icon(
+                    Icons.flag_circle_sharp,
+                    size: 25,
+                  ),
+                  onTap: _routeInspeccionesDataTables,
+                ),
+              ),
+              /*Center(
+                child: _buildTable(sortAscending: true),
+              )*/
             ],
           ),
         ),
@@ -100,3 +201,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+

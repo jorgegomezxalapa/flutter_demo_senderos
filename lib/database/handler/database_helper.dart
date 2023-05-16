@@ -40,7 +40,20 @@ class DatabaseHelper {
     var databasesPath = await getDatabasesPath();
     String path = '$databasesPath/$_databaseName';
     return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+        version: _databaseVersion,
+        onCreate: _onCreate,
+        onUpgrade: (Database db, int oldVersion, int newVersion) async {
+          if (oldVersion < newVersion) {
+            await db.execute(
+              'DROP TABLE IF EXISTS module',
+            );
+
+            await db.execute(
+              'CREATE TABLE module (id TEXT, name TEXT, code TEXT, campusId TEXT, otherFile TEXT)',
+            );
+          }
+        },
+    );
   }
 
   // Crea la tabla personas y la tabla paises
