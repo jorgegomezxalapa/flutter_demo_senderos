@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:demo_senderos/formularios/formulario_datos_generales.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
@@ -30,6 +31,13 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   void _routeFormularioPersona() { Navigator.of(context) .push(MaterialPageRoute(builder: (context) => ModuloPersona())); }
   void _routeApiPaises() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApiPaises())); }
+  void _routeFormularioDatosGenerales(){
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) => FormularioDatosGenerales()
+      )
+    );
+  }
   @override
 
   Widget build(BuildContext context) {
@@ -91,6 +99,25 @@ class _MyAppState extends State<MyApp> {
                     size: 25,
                   ),
                   onTap: _routeApiPaises,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Card(
+                child: ListTile(
+                  title: const Text(
+                    'Formulario Datos Generales',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5
+                    ),),
+                  leading: const Icon(
+                    Icons.flag_circle_sharp,
+                    size: 25,
+                  ),
+                  onTap: _routeFormularioDatosGenerales,
                 ),
               ),
             ],
