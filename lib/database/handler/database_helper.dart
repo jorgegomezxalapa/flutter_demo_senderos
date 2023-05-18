@@ -21,6 +21,19 @@ class DatabaseHelper {
   static const columnIdPais = 'id_pais';
   static const columnCommon = 'common';
 
+  //tabla inspecciones
+  static const tableInspecciones = 'inspecciones';
+  static const columnIdInspeccion = 'id';
+  static const columnNoExpediente = 'no_expediente';
+  static const columnFechaInspeccion = 'fecha_inspeccion';
+  static const columnNombreRazonSocial = 'nombre_razon_social';
+  static const columnDomicilio = 'domicilio';
+  static const columnSubtipoActuacion = 'subtipo_actuacion';
+  static const columnMateria = 'materia';
+  static const columnAlcance = 'alcance';
+  static const columnInspectorAsignado = 'inspector_asignado';
+  static const columnEstatus = 'estatus';
+
   // Instancia singleton
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -51,10 +64,18 @@ class DatabaseHelper {
             await db.execute(
               'CREATE TABLE module (id TEXT, name TEXT, code TEXT, campusId TEXT, otherFile TEXT)',
             );
+            await db.execute(
+              'CREATE TABLE inspecciones (id TEXT, no_expediente TEXT, fecha_inspeccion DATE, nombre_razon_social TEXT, domicilio TEXT, subtipo_actuacion TEXT, materia TEXT, alcance TEXT, inspector_asignado TEXT, estatus TEXT)',
+            );
+            // Insert some records in a transaction
+            await db.transaction((txn) async {
+              await txn.rawInsert('INSERT INTO inspecciones(id,no_expediente,fecha_inspeccion,nombre_razon_social,domicilio,subtipo_actuacion,materia,alcance,inspector_asignado,estatus) VALUES("1","EXP00001","2023-03-27","sindicato de Trabajadores de la Industria de la Construcci\u00f3n en General, Similares y Conexos del Estado de Tabasco, Registro","BLVD. CLUB DE GOLF BELLAVISTA NUMERO 14","Subtipo de actuaci\u00f3n 0","Materia 0","Alcance 0","Nombre inspector 0","1"),("2","EXP00002","2023-04-16","SINDICATO NACIONAL DE TRABAJADORES DE FORD MOTOR COMPANY Y DE LA INDUSTRIA AUTOMOTRIZ C.T.M,","PROLONGACION XICOTENCATL 2160","Subtipo de actuaci\u00f3n 1","Materia 1","Alcance 1","Nombre inspector 1","1"),("3","EXP00003","2023-04-12","SINDICATO DE TRABAJADORES Y EMPLEADOS DE AUTOTRANSPORTES DE SERVICIO P\u00daBLICO SIMILARES Y CONEXOS DEL ESTADO DE CAMPECHE","Ignacio L. Rayon 713","Subtipo de actuaci\u00f3n 2","Materia 2","Alcance 2","Nombre inspector 2","1")');
+            });
           }
         },
     );
   }
+
 
   // Crea la tabla personas y la tabla paises
   Future _onCreate(Database db, int version) async {
@@ -113,7 +134,28 @@ class DatabaseHelper {
     return await db!.query(tablePaises);
   }
 
+  //Inserta varios registros en la tabla de inspecciones
+  Future<void> insertInspecciones(List<Map<String, dynamic>> rows) async {
+    Database? db = await instance.database;
+    Batch batch = db!.batch();
+    for (var row in rows) {
+      // Use the INSERT OR IGNORE statement to ignore any rows that would result in a conflict
+      batch.insert(tableInspecciones, row, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+    await batch.commit();
+  }
 
+  //Inserta un registro en la tabla de inspecciones
+  Future<int?> insertInspeccion(Map<String, dynamic> row) async {
+    Database? db = await instance.database;
+    return await db?.insert(tableInspecciones, row);
+  }
+
+
+  Future<List<Map<String, dynamic>>> queryAllInspecciones() async {
+    Database? db = await instance.database;
+    return await db!.query(tableInspecciones);
+  }
 
 
 }

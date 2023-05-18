@@ -1,5 +1,5 @@
 import 'dart:io' show Platform;
-import 'package:demo_senderos/apis/inspecciones.dart';
+import 'package:demo_senderos/apis/api_inspecciones.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
@@ -8,6 +8,7 @@ import 'package:demo_senderos/formularios/modulo_persona.dart';
 import 'package:demo_senderos/partials/my_app_bar.dart';
 
 import 'apis/bandeja_inspecciones.dart';
+import 'apis/lista_inspecciones.dart';
 
 
 Future main() async {
@@ -88,8 +89,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   void _routeFormularioPersona() { Navigator.of(context) .push(MaterialPageRoute(builder: (context) => ModuloPersona())); }
   void _routeApiPaises() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApiPaises())); }
-  void _routeInspecciones() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => InspeccionesService())); }
-  void _routeInspeccionesDataTables() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => BanddejaInspecciones())); }
+  void _routeInspecciones() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApiInspecciones())); }
+  void _routeInspeccionesDataTables() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => DataPage())); }
+  void _routeInspeccionesLista() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListaInspecciones())); }
   @override
 
   Widget build(BuildContext context) {
@@ -189,6 +191,25 @@ class _MyAppState extends State<MyApp> {
                     size: 25,
                   ),
                   onTap: _routeInspeccionesDataTables,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Card(
+                child: ListTile(
+                  title: const Text(
+                    'Inspecciones lista',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5
+                    ),),
+                  leading: const Icon(
+                    Icons.flag_circle_sharp,
+                    size: 25,
+                  ),
+                  onTap: _routeInspeccionesLista,
                 ),
               ),
               /*Center(

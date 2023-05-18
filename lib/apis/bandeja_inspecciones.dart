@@ -2,15 +2,25 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:responsive_table/responsive_table.dart';
 
+import '../database/handler/database_helper.dart';
+import '../partials/my_app_bar.dart';
+
 /*void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(BanddejaInspecciones());
 }*/
 
-class BanddejaInspecciones extends StatelessWidget {
+/*class BandejaInspecciones extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+      return Scaffold(
+        appBar: CustomAppBar(
+          titleText: "Bandeja de inspecciones",
+        ),
+        body: DataPage(),
+      );
+
+    /*return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -20,24 +30,27 @@ class BanddejaInspecciones extends StatelessWidget {
       routes: {
         '/': (_) => DataPage(),
       },
-    );
+    );*/
   }
-}
+}*/
 
 class DataPage extends StatefulWidget {
   DataPage({Key? key}) : super(key: key);
+  String? titulo = 'Bandeja de inspecciones';
   @override
   _DataPageState createState() => _DataPageState();
 }
 
 class _DataPageState extends State<DataPage> {
   late List<DatatableHeader> _headers;
+  final dbHelper = DatabaseHelper.instance;
+  late Future<List<Map<String, dynamic>>> _inspecciones;
 
   List<int> _perPages = [10, 20, 50, 100];
   int _total = 100;
   int? _currentPerPage = 10;
   List<bool>? _expanded;
-  String? _searchKey = "id";
+  String? _searchKey = "no_expediente";
 
   int _currentPage = 1;
   bool _isSearch = false;
@@ -46,7 +59,7 @@ class _DataPageState extends State<DataPage> {
   List<Map<String, dynamic>> _source = [];
   List<Map<String, dynamic>> _selecteds = [];
   // ignore: unused_field
-  String _selectableKey = "id";
+  String _selectableKey = "no_expediente";
 
   String? _sortColumn;
   bool _sortAscending = true;
@@ -54,27 +67,28 @@ class _DataPageState extends State<DataPage> {
   bool _showSelect = true;
   var random = new Random();
 
-  List<Map<String, dynamic>> _generateData({int n: 100}) {
-    final List source = List.filled(n, Random.secure());
+  List<Map<String, dynamic>> _generateData() {
+    var list = _inspecciones.map<DataRow>((i){
+      print(i);
+    }).toList();
     List<Map<String, dynamic>> temps = [];
-    var i = 1;
-    print(i);
     // ignore: unused_local_variable
-    for (var data in source) {
+    for (var i = 1; i < 100; i++) {
       temps.add({
-        "id": i,
-        "sku": "$i\000$i",
-        "name": "Product $i",
-        "category": "Category-$i",
-        "price": i * 10.00,
-        "cost": "20.00",
-        "margin": "${i}0.20",
-        "in_stock": "${i}0",
-        "alert": "5",
-        "received": [i + 20, 150]
+        "no_expediente": i,
+        "fecha_inspeccion": "$i\000$i",
+        "nombre_razon_social": "Product $i",
+        "domicilio": "Category-$i",
+        "subtipo_actuacion": i * 10.00,
+        "materia": "20.00",
+        "alcance": "${i}0.20",
+        "inspector_asignado": "${i}0",
       });
-      i++;
     }
+
+    print("lista");
+    print(temps);
+    print(temps.runtimeType);
     return temps;
   }
 
@@ -88,7 +102,7 @@ class _DataPageState extends State<DataPage> {
     setState(() => _isLoading = true);
     Future.delayed(Duration(seconds: 3)).then((value) {
       _sourceOriginal.clear();
-      _sourceOriginal.addAll(_generateData(n: random.nextInt(10000)));
+      _sourceOriginal.addAll(_generateData());
       _sourceFiltered = _sourceOriginal;
       _total = _sourceFiltered.length;
       _source = _sourceFiltered.getRange(0, _currentPerPage!).toList();
@@ -140,77 +154,55 @@ class _DataPageState extends State<DataPage> {
     /// set headers
     _headers = [
       DatatableHeader(
-          text: "ID",
-          value: "id",
+          text: "Número de expediente",
+          value: "no_expediente",
           show: true,
           sortable: true,
           textAlign: TextAlign.center),
       DatatableHeader(
-          text: "Name",
-          value: "name",
+          text: "Fecha de inspección",
+          value: "fecha_inspeccion",
           show: true,
           flex: 2,
           sortable: true,
           editable: true,
           textAlign: TextAlign.left),
       DatatableHeader(
-          text: "SKU",
-          value: "sku",
+          text: "Nombre razón social",
+          value: "nombre_razon_social",
           show: true,
           sortable: true,
           textAlign: TextAlign.center),
       DatatableHeader(
-          text: "Category",
-          value: "category",
+          text: "Domicilio",
+          value: "domicilio",
           show: true,
           sortable: true,
           textAlign: TextAlign.left),
       DatatableHeader(
-          text: "Price",
-          value: "price",
+          text: "Subtipo de actuación",
+          value: "subtipo_actuacion",
           show: true,
           sortable: true,
           textAlign: TextAlign.left),
       DatatableHeader(
-          text: "Margin",
-          value: "margin",
+          text: "Materia",
+          value: "materia",
           show: true,
           sortable: true,
           textAlign: TextAlign.left),
       DatatableHeader(
-          text: "In Stock",
-          value: "in_stock",
+          text: "Alcance",
+          value: "alcance",
           show: true,
           sortable: true,
           textAlign: TextAlign.left),
       DatatableHeader(
-          text: "Alert",
-          value: "alert",
+          text: "Inspector asignado",
+          value: "inspector_asignado",
           show: true,
           sortable: true,
           textAlign: TextAlign.left),
-      DatatableHeader(
-          text: "Received",
-          value: "received",
-          show: true,
-          sortable: false,
-          sourceBuilder: (value, row) {
-            List list = List.from(value);
-            return Container(
-              child: Column(
-                children: [
-                  Container(
-                    width: 85,
-                    child: LinearProgressIndicator(
-                      value: list.first / list.last,
-                    ),
-                  ),
-                  Text("${list.first} de ${list.last}")
-                ],
-              ),
-            );
-          },
-          textAlign: TextAlign.center),
     ];
 
     _initializeData();
@@ -222,26 +214,11 @@ class _DataPageState extends State<DataPage> {
   }
 
   @override
+  /*contenido de la tabla*/
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("RESPONSIVE DATA TABLE"),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text("home"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.storage),
-              title: Text("data"),
-              onTap: () {},
-            )
-          ],
-        ),
+      appBar: CustomAppBar(
+        titleText: widget.titulo,
       ),
       body: SingleChildScrollView(
           child: Column(
@@ -259,18 +236,13 @@ class _DataPageState extends State<DataPage> {
                     shadowColor: Colors.black,
                     clipBehavior: Clip.none,
                     child: ResponsiveDatatable(
-                      title: TextButton.icon(
-                        onPressed: () => {},
-                        icon: Icon(Icons.add),
-                        label: Text("new item"),
-                      ),
                       reponseScreenSizes: [ScreenSize.xs],
                       actions: [
                         if (_isSearch)
                           Expanded(
                               child: TextField(
                                 decoration: InputDecoration(
-                                    hintText: 'Enter search term based on ' +
+                                    hintText: 'Busqueda por ' +
                                         _searchKey!
                                             .replaceAll(new RegExp('[\\W_]+'), ' ')
                                             .toUpperCase(),
