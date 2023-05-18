@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:demo_senderos/apis/api_inspecciones.dart';
+import 'package:demo_senderos/formularios/formulario_datos_generales.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
@@ -89,9 +90,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   void _routeFormularioPersona() { Navigator.of(context) .push(MaterialPageRoute(builder: (context) => ModuloPersona())); }
   void _routeApiPaises() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApiPaises())); }
+  void _routeFormularioDatosGenerales(){
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) => FormularioDatosGenerales()
+      )
+    );
+  }
   void _routeInspecciones() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApiInspecciones())); }
   void _routeInspeccionesDataTables() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => DataPage())); }
   void _routeInspeccionesLista() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListaInspecciones())); }
+
   @override
 
   Widget build(BuildContext context) {
@@ -161,7 +170,7 @@ class _MyAppState extends State<MyApp> {
               Card(
                 child: ListTile(
                   title: const Text(
-                    'Inspecciones',
+                    'Formulario Datos Generales',
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -171,9 +180,28 @@ class _MyAppState extends State<MyApp> {
                     Icons.flag_circle_sharp,
                     size: 25,
                   ),
-                  onTap: _routeInspecciones,
+                  onTap: _routeFormularioDatosGenerales,
                 ),
               ),
+              const SizedBox(
+                height: 10,
+              ),
+              Card(
+                child: ListTile(
+                  title: const Text(
+                  'Inspecciones',
+                  style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5
+                  ),),
+                leading: const Icon(
+                  Icons.flag_circle_sharp,
+                  size: 25,
+                ),
+                onTap: _routeInspecciones,
+              ),
+            ),
               const SizedBox(
                 height: 10,
               ),

@@ -68,9 +68,9 @@ class _DataPageState extends State<DataPage> {
   var random = new Random();
 
   List<Map<String, dynamic>> _generateData() {
-    var list = _inspecciones.map<DataRow>((i){
+    /*var list = _inspecciones.map<DataRow>((i){
       print(i);
-    }).toList();
+    }).toList();*/
     List<Map<String, dynamic>> temps = [];
     // ignore: unused_local_variable
     for (var i = 1; i < 100; i++) {
