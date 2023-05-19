@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:demo_senderos/database/handler/database_helper.dart';
 import 'package:demo_senderos/formularios/formulario_datos_generales.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -15,6 +16,8 @@ Future main() async {
     // Change the default factory
     databaseFactory = ffi.databaseFactoryFfi;
   }
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.instance.database;
   runApp(const MaterialApp(
     title: 'Flutter App',
     home: MyApp(),

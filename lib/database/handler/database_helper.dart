@@ -1,12 +1,9 @@
-
 import 'package:sqflite/sqflite.dart';
 
-
 class DatabaseHelper {
-  //db info
+  //db
   static const _databaseName = "my_database.db";
   static const _databaseVersion = 1;
-
   //tabla personas
   static const table = 'personas';
   static const columnId = 'id';
@@ -15,7 +12,6 @@ class DatabaseHelper {
   static const columnSegundoApellido = 'segundo_apellido';
   static const columnEdad = 'edad';
   static const columnGenero = 'genero';
-
   //tabla paises
   static const tablePaises = 'paises';
   static const columnIdPais = 'id_pais';
@@ -30,22 +26,74 @@ class DatabaseHelper {
   Future<Database?> get database async {
     if (_database != null) return _database;
     _database = await _initDatabase();
-    //await _onCreatePaises(_database!, _databaseVersion);
     return _database;
   }
-
 
   // Abre la base de datos
   _initDatabase() async {
     var databasesPath = await getDatabasesPath();
     String path = '$databasesPath/$_databaseName';
     return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+        version: _databaseVersion,
+        onCreate: _onCreate,
+        onOpen: (db) async {
+
+          // Verifica si la tabla personas existe
+          var personasTableExists = await db.rawQuery(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name='$table'");
+          // Si no existe, crea la tabla personas
+          if (personasTableExists.isEmpty) {
+
+            await _onCreatePersonas(db, _databaseVersion);
+          }
+          // Verifica si la tabla paises existe
+          var paisesTableExists = await db.rawQuery(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name='$tablePaises'");
+          // Si no existe, crea la tabla paises
+          if (paisesTableExists.isEmpty) {
+            await _onCreatePaises(db, _databaseVersion);
+          }
+        });
   }
 
   // Crea la tabla personas y la tabla paises
   Future _onCreate(Database db, int version) async {
+
     // Crea la tabla personas
+    await _onCreatePersonas(db, version);
+    // Crea la tabla paises
+    await _onCreatePaises(db, version);
+  }
+
+  // Crea la tabla paises y luego inserta los registros iniciales
+  Future _onCreatePaises(Database db, int version) async {
+
+    // Crea la tabla paises
+    await db.execute('''
+    CREATE TABLE $tablePaises (
+      $columnIdPais INTEGER PRIMARY KEY AUTOINCREMENT,
+      $columnCommon TEXT NOT NULL,
+      UNIQUE ($columnCommon)
+    )
+  ''');
+
+    // Crea una lista de mapas con los datos de los países a insertar
+    List<Map<String, dynamic>> paises = [
+      {DatabaseHelper.columnCommon: 'México Local'},
+      {DatabaseHelper.columnCommon: 'Estados Unidos Local'},
+      {DatabaseHelper.columnCommon: 'Canadá Local'}
+    ];
+
+    // Inserta cada país en la tabla paises
+    for (var pais in paises) {
+
+      await db.insert(tablePaises, pais);
+    }
+  }
+
+  // Crea la tabla paises
+  Future _onCreatePersonas(Database db, int version) async {
+
     await db.execute('''
     CREATE TABLE $table (
       $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,20 +104,6 @@ class DatabaseHelper {
       $columnGenero TEXT NOT NULL
     )
   ''');
-
-    // Crea la tabla paises
-    await _onCreatePaises(db, version);
-  }
-
-  // Crea la tabla paises
-  Future _onCreatePaises(Database db, int version) async {
-    await db.execute('''
-          CREATE TABLE $tablePaises (
-            $columnIdPais INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnCommon TEXT NOT NULL,
-            UNIQUE ($columnCommon)
-          )
-          ''');
   }
 
   // Inserta un registro en la tabla personas
@@ -95,12 +129,11 @@ class DatabaseHelper {
     await batch.commit();
   }
 
+  //Obtiene el listado de paises de la tabla paises
   Future<List<Map<String, dynamic>>> queryAllPaises() async {
     Database? db = await instance.database;
     return await db!.query(tablePaises);
   }
-
-
 
 
 }
