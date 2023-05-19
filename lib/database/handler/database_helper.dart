@@ -16,6 +16,36 @@ class DatabaseHelper {
   static const tablePaises = 'paises';
   static const columnIdPais = 'id_pais';
   static const columnCommon = 'common';
+  //tabla notificaciones
+  static const tableNotificacion = 'notificacion';
+  static const columnNotificacionId = 'notificacion_id';
+  static const columnTipoDocumentoIdNotificacion = 'tipo_documento_id';
+  static const columnInspectorIdNotificacion = 'inspector_id';
+  static const columnInspeccionIdNotificacion = 'inspeccion_id';
+  static const columnNotifMotivoNoEntregaIdNotificacion = 'notif_motivo_no_entrega_id';
+  static const columnNotifFormaConstatacionIdNotificacion = 'notif_forma_constatacion_id';
+  static const columnNotifEstatusAsignacionNotificacion = 'notif_estatus_asignacion';
+  static const columnNotifFormaEntregaNotificacion = 'notif_forma_entrega';
+  static const columnNotifFormaEnvioNotificacion = 'notif_forma_envio';
+  static const columnNotifFecLimiteEntregaNotificacion = 'notif_fec_limite_entrega';
+  static const columnNotifHoraLimiteRecepcionNotificacion = 'notif_hora_limite_recepcion';
+  static const columnNotifNotificacionPersonalNotificacion = 'notif_notificacion_personal';
+  static const columnNotifFecEnvioNotificacion = 'notif_fec_envio';
+  static const columnNotifNumGuiaNotificacion = 'notif_num_guia';
+  static const columnNotifFecEntregaProgramadaNotificacion = 'notif_fec_entrega_programada';
+  static const columnNotifEstatusEntregaNotificacion = 'notif_estatus_entrega';
+  static const columnNotifSeRecibioNotificacion = 'notif_se_recibio';
+  static const columnNotifQuedoPegadoNotificacion = 'notif_quedo_pegado';
+  static const columnNotifOtroMotivoNotificacion = 'notif_otro_motivo';
+  static const columnNotifFecEntregaNotificacion = 'notif_fec_entrega';
+  static const columnNotifNombreRecibioNotificacion = 'notif_nombre_recibio';
+  static const columnNotifDijoSerNotificacion = 'notif_dijo_ser';
+  static const columnNotifObservacionesNotificacion = 'notif_observaciones';
+  static const columnSysUsrInsertNotificacion = 'sys_usr_insert';
+  static const columnSysFecInserNotificacion = 'sys_fec_insert';
+  static const columnSysUsrUpdateNotificacion = 'sys_usr_update';
+  static const columnSysFecUpdateNotificacion = 'sys_fec_update';
+
 
   // Instancia singleton
   DatabaseHelper._privateConstructor();
@@ -53,6 +83,14 @@ class DatabaseHelper {
           if (paisesTableExists.isEmpty) {
             await _onCreatePaises(db, _databaseVersion);
           }
+
+          // Verifica si la tabla notificacion existe
+          var notificacionTableExists = await db.rawQuery(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name='$tableNotificacion'");
+          // Si no existe, crea la tabla notificacion
+          if (notificacionTableExists.isEmpty) {
+            await _onCreateNotificacion(db, _databaseVersion);
+          }
         });
   }
 
@@ -63,6 +101,8 @@ class DatabaseHelper {
     await _onCreatePersonas(db, version);
     // Crea la tabla paises
     await _onCreatePaises(db, version);
+
+    await _onCreateNotificacion(db, version);
   }
 
   // Crea la tabla paises y luego inserta los registros iniciales
@@ -91,7 +131,7 @@ class DatabaseHelper {
     }
   }
 
-  // Crea la tabla paises
+  // Crea la tabla personas
   Future _onCreatePersonas(Database db, int version) async {
 
     await db.execute('''
@@ -106,8 +146,49 @@ class DatabaseHelper {
   ''');
   }
 
+  // Crea la tabla notificacion
+  Future _onCreateNotificacion(Database db, int version) async {
+    await db.execute('''
+    CREATE TABLE $tableNotificacion (
+      $columnNotificacionId INTEGER PRIMARY KEY AUTOINCREMENT,
+      $columnTipoDocumentoIdNotificacion INTEGER,
+      $columnInspectorIdNotificacion INTEGER,
+      $columnInspeccionIdNotificacion INTEGER,
+      $columnNotifMotivoNoEntregaIdNotificacion INTEGER,
+      $columnNotifFormaConstatacionIdNotificacion INTEGER,
+      $columnNotifEstatusAsignacionNotificacion INTEGER,
+      $columnNotifFormaEntregaNotificacion INTEGER,
+      $columnNotifFormaEnvioNotificacion TEXT,
+      $columnNotifFecLimiteEntregaNotificacion TEXT,
+      $columnNotifHoraLimiteRecepcionNotificacion TEXT,
+      $columnNotifNotificacionPersonalNotificacion INTEGER,
+      $columnNotifFecEnvioNotificacion TEXT,
+      $columnNotifNumGuiaNotificacion TEXT,
+      $columnNotifFecEntregaProgramadaNotificacion TEXT,
+      $columnNotifEstatusEntregaNotificacion INTEGER,
+      $columnNotifSeRecibioNotificacion INTEGER,
+      $columnNotifQuedoPegadoNotificacion INTEGER,
+      $columnNotifOtroMotivoNotificacion TEXT,
+      $columnNotifFecEntregaNotificacion TEXT,
+      $columnNotifNombreRecibioNotificacion TEXT,
+      $columnNotifDijoSerNotificacion TEXT,
+      $columnNotifObservacionesNotificacion TEXT,
+      $columnSysUsrInsertNotificacion TEXT,
+      $columnSysFecInserNotificacion TEXT,
+      $columnSysUsrUpdateNotificacion TEXT,
+      $columnSysFecUpdateNotificacion TEXT
+    )
+  ''');
+  }
+
   // Inserta un registro en la tabla personas
   Future<int?> insert(Map<String, dynamic> row) async {
+    Database? db = await instance.database;
+    return await db?.insert(table, row);
+  }
+
+  // Inserta un registro en la tabla notificacion
+  Future<int?> insertNotificacion(Map<String, dynamic> row) async {
     Database? db = await instance.database;
     return await db?.insert(table, row);
   }
@@ -135,5 +216,10 @@ class DatabaseHelper {
     return await db!.query(tablePaises);
   }
 
+  //Obtiene el listado de notificaciones de la tabla notificacion
+  Future<List<Map<String, dynamic>>> queryAllNotificaciones() async {
+    Database? db = await instance.database;
+    return await db!.query(tableNotificacion);
+  }
 
 }
