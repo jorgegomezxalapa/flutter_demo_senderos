@@ -76,6 +76,8 @@ class ListaInspeccionesState extends State<ListaInspecciones> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return   DataTable(
+              columnSpacing: (MediaQuery.of(context).size.width / 10) * 0.1,
+              dataRowHeight: 80,
               sortColumnIndex: 0,
               sortAscending: true,
               onSelectAll: (value) {},
@@ -118,30 +120,14 @@ class ListaInspeccionesState extends State<ListaInspecciones> {
                 return DataRow(
                   //key: Key(i.id),
                   cells:<DataCell>[
-                    DataCell(
-                        Text(i['no_expediente'])
-                    ),
-                    DataCell(
-                        Text(i['fecha_inspeccion'])
-                    ),
-                    DataCell(
-                        Text(i['nombre_razon_social'])
-                    ),
-                    DataCell(
-                        Text(i['domicilio'])
-                    ),
-                    DataCell(
-                        Text(i['subtipo_actuacion'])
-                    ),
-                    DataCell(
-                        Text(i['materia'])
-                    ),
-                    DataCell(
-                        Text(i['alcance'])
-                    ),
-                    DataCell(
-                        Text(i['inspector_asignado'])
-                    )
+                    DataCell(Container(width: (MediaQuery.of(context).size.width / 10) * 3, child: Text(i['no_expediente']))),
+                    DataCell(Container(width: (MediaQuery.of(context).size.width / 10) * 3, child: Text(i['fecha_inspeccion']))),
+                    DataCell(Container(width: (MediaQuery.of(context).size.width / 10) * 3, child: Text(i['nombre_razon_social']))),
+                    DataCell(Container(width: (MediaQuery.of(context).size.width / 10) * 3, child: Text(i['domicilio']))),
+                    DataCell(Container(width: (MediaQuery.of(context).size.width / 10) * 3, child: Text(i['subtipo_actuacion']))),
+                    DataCell(Container(width: (MediaQuery.of(context).size.width / 10) * 3, child: Text(i['materia']))),
+                    DataCell(Container(width: (MediaQuery.of(context).size.width / 10) * 3, child: Text(i['alcance']))),
+                    DataCell(Container(width: (MediaQuery.of(context).size.width / 10) * 3, child: Text(i['inspector_asignado']))),
                   ],
                 );
               }).toList(),

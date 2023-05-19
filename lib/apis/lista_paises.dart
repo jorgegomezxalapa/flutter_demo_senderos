@@ -55,19 +55,8 @@ class ListaPaisesState extends State<ListaPaises> {
     return "Success!";
   }
 
-  Future<void> _insertPaises() async {
-    await dbHelper.database; // Asegúrate de que la base de datos esté creada
-    List<Map<String, dynamic>> paises = [
-      {DatabaseHelper.columnCommon: 'México Local'},
-      {DatabaseHelper.columnCommon: 'Estados Unidos Local'},
-      {DatabaseHelper.columnCommon: 'Canadá Local'}
-    ];
-    await dbHelper.insertPaises(paises);
-  }
-
   @override
   void initState() {
-    _insertPaises();
     super.initState();
     _paisesFuture = dbHelper.queryAllPaises();
     data = [];

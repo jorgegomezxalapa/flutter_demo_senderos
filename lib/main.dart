@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:demo_senderos/apis/api_inspecciones.dart';
+import 'package:demo_senderos/database/handler/database_helper.dart';
 import 'package:demo_senderos/formularios/formulario_datos_generales.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,6 +20,8 @@ Future main() async {
     // Change the default factory
     databaseFactory = ffi.databaseFactoryFfi;
   }
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.instance.database;
   runApp(const MaterialApp(
     title: 'Flutter App',
     home: MyApp(),
@@ -99,7 +102,6 @@ class _MyAppState extends State<MyApp> {
   }
   void _routeInspecciones() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApiInspecciones())); }
   void _routeInspeccionesDataTables() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => DataPage())); }
-  void _routeInspeccionesLista() { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListaInspecciones())); }
 
   @override
 
@@ -219,25 +221,6 @@ class _MyAppState extends State<MyApp> {
                     size: 25,
                   ),
                   onTap: _routeInspeccionesDataTables,
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Card(
-                child: ListTile(
-                  title: const Text(
-                    'Inspecciones lista',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5
-                    ),),
-                  leading: const Icon(
-                    Icons.flag_circle_sharp,
-                    size: 25,
-                  ),
-                  onTap: _routeInspeccionesLista,
                 ),
               ),
               /*Center(

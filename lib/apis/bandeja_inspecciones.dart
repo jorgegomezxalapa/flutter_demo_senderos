@@ -52,7 +52,7 @@ class _DataPageState extends State<DataPage> {
   List<bool>? _expanded;
   String? _searchKey = "no_expediente";
 
-  int _currentPage = 1;
+  int _currentPage = 1;/*pagina extension la que inicia*/
   bool _isSearch = false;
   List<Map<String, dynamic>> _sourceOriginal = [];
   List<Map<String, dynamic>> _sourceFiltered = [];
@@ -68,9 +68,6 @@ class _DataPageState extends State<DataPage> {
   var random = new Random();
 
   List<Map<String, dynamic>> _generateData() {
-    /*var list = _inspecciones.map<DataRow>((i){
-      print(i);
-    }).toList();*/
     List<Map<String, dynamic>> temps = [];
     // ignore: unused_local_variable
     for (var i = 1; i < 100; i++) {
@@ -163,9 +160,8 @@ class _DataPageState extends State<DataPage> {
           text: "Fecha de inspección",
           value: "fecha_inspeccion",
           show: true,
-          flex: 2,
+          /*flex: 2,*/
           sortable: true,
-          editable: true,
           textAlign: TextAlign.left),
       DatatableHeader(
           text: "Nombre razón social",
@@ -274,12 +270,12 @@ class _DataPageState extends State<DataPage> {
                       selecteds: _selecteds,
                       showSelect: _showSelect,
                       autoHeight: false,
-                      dropContainer: (data) {
+                      /*dropContainer: (data) {
                         if (int.tryParse(data['id'].toString())!.isEven) {
                           return Text("is Even");
                         }
                         return _DropDownContainer(data: data);
-                      },
+                      },*/
                       onChangedRow: (value, header) {
                         /// print(value);
                         /// print(header);
@@ -317,7 +313,7 @@ class _DataPageState extends State<DataPage> {
                       sortAscending: _sortAscending,
                       sortColumn: _sortColumn,
                       isLoading: _isLoading,
-                      onSelect: (value, item) {
+                      /*onSelect: (value, item) {
                         print("$value  $item ");
                         if (value!) {
                           setState(() => _selecteds.add(item));
@@ -333,7 +329,7 @@ class _DataPageState extends State<DataPage> {
                         } else {
                           setState(() => _selecteds.clear());
                         }
-                      },
+                      },*/
                       footers: [
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 15),
@@ -402,10 +398,10 @@ class _DataPageState extends State<DataPage> {
                   ),
                 ),
               ])),
-      floatingActionButton: FloatingActionButton(
+      /*floatingActionButton: FloatingActionButton(
         onPressed: _initializeData,
         child: Icon(Icons.refresh_sharp),
-      ),
+      ),*/
     );
   }
 }
@@ -416,6 +412,7 @@ class _DropDownContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('kjgkh');
     List<Widget> _children = data.entries.map<Widget>((entry) {
       Widget w = Row(
         children: [
