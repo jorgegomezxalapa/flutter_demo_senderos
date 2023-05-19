@@ -3,6 +3,7 @@ import 'package:demo_senderos/partials/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class FormularioDatosGenerales extends StatefulWidget {
+
   String? titulo = 'Formulario Datos Generales';
   FormularioDatosGenerales({super.key});
 
@@ -12,6 +13,11 @@ class FormularioDatosGenerales extends StatefulWidget {
 }
 
 class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
   String _radioRecibioEmpresa = 'Sí';
   String _radioSeDejoPegado = 'Sí';
   String _selectedOptionMotivo = '--Seleccionar--';
