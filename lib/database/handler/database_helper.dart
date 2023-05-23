@@ -190,7 +190,7 @@ class DatabaseHelper {
   // Inserta un registro en la tabla notificacion
   Future<int?> insertNotificacion(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db?.insert(table, row);
+    return await db?.insert(tableNotificacion, row);
   }
 
   //Inserta un registro en la tabla de paises
