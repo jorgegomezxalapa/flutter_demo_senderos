@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:demo_senderos/database/handler/database_helper.dart';
 import 'package:demo_senderos/formularios/formulario_datos_generales.dart';
+import 'package:demo_senderos/formularios/partials/inspecciones.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
@@ -39,6 +40,13 @@ class _MyAppState extends State<MyApp> {
       MaterialPageRoute(
           builder: (context) => FormularioDatosGenerales()
       )
+    );
+  }
+  void _routeInspecciones(){
+    Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => ModuloInspeccion()
+        )
     );
   }
   @override
@@ -121,6 +129,22 @@ class _MyAppState extends State<MyApp> {
                     size: 25,
                   ),
                   onTap: _routeFormularioDatosGenerales,
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  title: const Text(
+                    'Inspecciones',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5
+                    ),),
+                  leading: const Icon(
+                    Icons.list_alt,
+                    size: 25,
+                  ),
+                  onTap: _routeInspecciones,
                 ),
               ),
             ],
