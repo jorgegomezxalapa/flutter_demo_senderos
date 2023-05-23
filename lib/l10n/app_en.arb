@@ -1,0 +1,23 @@
+{
+  "appBar": "Senderos Móvil v{version}",
+  "@appBar": {
+    "description": "Application version",
+    "placeholders": {
+        "version": {
+            "type": "String",
+            "example": "0.1"
+        }
+    }
+  },
+  "generalIniciarSesion": "Login",
+  "generalAccede": "Login to Senderos Móvil v{version} App",
+  "@generalAccede": {
+    "description": "App version",
+    "placeholders": {
+        "version": {
+            "type": "String",
+            "example": "0.1"
+        }
+    }
+  }
+}

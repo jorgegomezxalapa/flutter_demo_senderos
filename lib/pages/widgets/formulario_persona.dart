@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:demo_senderos/database/handler/database_helper.dart';
-
+import 'package:air_senderos/database/handler/database_helper.dart';
 
 class FormularioPersona extends StatefulWidget {
   const FormularioPersona({super.key});
@@ -56,7 +55,8 @@ class FormularioPersonaState extends State<FormularioPersona> {
               ),
               TextFormField(
                 initialValue: _segundoApellido,
-                decoration: const InputDecoration(labelText: 'Segundo Apellido'),
+                decoration:
+                    const InputDecoration(labelText: 'Segundo Apellido'),
                 validator: (value) {
                   if ((value ?? '').isEmpty) {
                     return 'Por favor ingresa tu segundo apellido';
@@ -88,9 +88,9 @@ class FormularioPersonaState extends State<FormularioPersona> {
                 decoration: const InputDecoration(labelText: 'Género'),
                 items: ['', 'Masculino', 'Femenino']
                     .map((label) => DropdownMenuItem(
-                  value: label,
-                  child: Text(label),
-                ))
+                          value: label,
+                          child: Text(label),
+                        ))
                     .toList(),
                 onChanged: (value) => setState(() => _genero = value!),
               ),
@@ -108,7 +108,6 @@ class FormularioPersonaState extends State<FormularioPersona> {
                       },
                     ),
                   );
-
 
                   if (_formKey.currentState != null &&
                       _formKey.currentState!.validate()) {
@@ -129,13 +128,8 @@ class FormularioPersonaState extends State<FormularioPersona> {
                     // Find the ScaffoldMessenger in the widget tree
                     // and use it to show a SnackBar.
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
                   }
-
-
                 },
-
-
                 child: const Text('Guardar formulario'),
               ),
             ],

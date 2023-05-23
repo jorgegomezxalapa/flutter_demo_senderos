@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-
 class FormularioDireccion extends StatefulWidget {
   const FormularioDireccion({super.key});
-
   @override
   FormularioDireccionState createState() => FormularioDireccionState();
 }
@@ -78,7 +76,8 @@ class FormularioDireccionState extends State<FormularioDireccion> {
                   }
                   return null;
                 },
-                onSaved: (value) => setState(() => _codigoPostal = int.parse(value!)),
+                onSaved: (value) =>
+                    setState(() => _codigoPostal = int.parse(value!)),
               ),
               const SizedBox(
                 height: 10,
@@ -94,7 +93,6 @@ class FormularioDireccionState extends State<FormularioDireccion> {
                 },
                 onSaved: (value) => setState(() => _estado = value!),
               ),
-
               const SizedBox(
                 height: 10,
               ),

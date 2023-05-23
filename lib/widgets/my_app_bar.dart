@@ -1,9 +1,10 @@
-import 'package:demo_senderos/alertas/alerta_informacion_enviada.dart';
-import 'package:demo_senderos/main.dart';
+import 'package:air_senderos/widgets/alerta_informacion_enviada.dart';
+import 'package:air_senderos/main.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:developer';
 
-class CustomAppBar extends StatefulWidget with PreferredSizeWidget {
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String? titleText;
   final bool? btnRegresar;
   const CustomAppBar({Key? key, this.titleText, this.btnRegresar})
@@ -43,6 +44,7 @@ class CustomAppBarState extends State<CustomAppBar> {
         _hasConnection = false;
       });
     }
+    log("_hasConnection is: $_hasConnection");
   }
 
   @override

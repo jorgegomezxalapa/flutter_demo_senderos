@@ -1,8 +1,7 @@
+import 'package:air_senderos/pages/lista_personas.dart';
+import 'package:air_senderos/pages/widgets/formulario_persona.dart';
 
-import 'package:demo_senderos/formularios/lista_personas.dart';
-import 'package:demo_senderos/formularios/partials/formulario_persona.dart';
-
-import 'package:demo_senderos/partials/my_app_bar.dart';
+import 'package:air_senderos/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class ModuloPersona extends StatefulWidget {
@@ -14,7 +13,10 @@ class ModuloPersona extends StatefulWidget {
 }
 
 class ModuloPersonaState extends State<ModuloPersona> {
-  void _routeListaPersonas() { Navigator.of(context) .push(MaterialPageRoute(builder: (context) => ListaPersonas())); }
+  void _routeListaPersonas() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => ListaPersonas()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,9 @@ class ModuloPersonaState extends State<ModuloPersona> {
               const SizedBox(
                 height: 20,
               ),
-              ElevatedButton(onPressed: _routeListaPersonas, child: const Text('Ver lista de personas')),
+              ElevatedButton(
+                  onPressed: _routeListaPersonas,
+                  child: const Text('Ver lista de personas')),
               const SizedBox(
                 height: 20,
               ),
