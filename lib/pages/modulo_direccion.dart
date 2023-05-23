@@ -1,5 +1,5 @@
-import 'package:demo_senderos/formularios/partials/formulario_direccion.dart';
-import 'package:demo_senderos/partials/my_app_bar.dart';
+import 'package:air_senderos/pages/widgets/formulario_direccion.dart';
+import 'package:air_senderos/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class ModuloDireccion extends StatefulWidget {

@@ -1,6 +1,6 @@
-import 'package:demo_senderos/apis/lista_paises.dart';
+import 'package:air_senderos/services/lista_paises.dart';
 
-import 'package:demo_senderos/partials/my_app_bar.dart';
+import 'package:air_senderos/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class ApiPaises extends StatefulWidget {

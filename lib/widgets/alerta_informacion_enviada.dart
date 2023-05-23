@@ -1,12 +1,12 @@
-import 'package:demo_senderos/partials/my_app_bar.dart';
+import 'package:air_senderos/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
-
 
 class AlertaInformacionEnviada extends StatefulWidget {
   const AlertaInformacionEnviada({super.key});
 
   @override
-  AlertaInformacionEnviadaState createState() => AlertaInformacionEnviadaState();
+  AlertaInformacionEnviadaState createState() =>
+      AlertaInformacionEnviadaState();
 }
 
 class AlertaInformacionEnviadaState extends State<AlertaInformacionEnviada> {
