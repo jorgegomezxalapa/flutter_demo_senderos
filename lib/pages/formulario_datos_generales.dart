@@ -1,12 +1,11 @@
-import 'package:demo_senderos/database/handler/database_helper.dart';
-import 'package:demo_senderos/partials/cargar_documento_widget.dart';
-import 'package:demo_senderos/partials/my_app_bar.dart';
+import 'package:air_senderos/database/handler/database_helper.dart';
+import 'package:air_senderos/widgets/cargar_documento_widget.dart';
 import 'package:flutter/material.dart';
 
 class FormularioDatosGenerales extends StatefulWidget {
-
+  final int? inspeccionId;
   String? titulo = 'Formulario Datos Generales';
-  FormularioDatosGenerales({super.key});
+  FormularioDatosGenerales({super.key, @required this.inspeccionId});
 
   @override
   FormularioDatosGeneralesState createState() =>
@@ -15,10 +14,32 @@ class FormularioDatosGenerales extends StatefulWidget {
 
 class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
 
+  late List<Map<String, dynamic>> _inspeccion = [];
+
   @override
   void initState() {
     super.initState();
+    _getInspeccion();
   }
+
+  //variables de consulta
+  String normatividad= '';
+  int? normatividadId;
+  String nombreRazonSocial= '';
+  String domicilio = '';
+  String fechaInspeccion = '';
+  String expediente = '';
+  String tipoActuacion = ''; // no se encuentra en la db
+  int? subtipo_actuacion_id;
+  String? subtipo_actuacion;
+  int? materia_id;
+  String tipoMateria = '';
+  int? alcance_id;
+  String alcance = '';
+  String expidioCitatorio = '';
+  int? expidioCitatorio_id;
+
+  //variables del formulario
   final _formularioDatosGenerales = GlobalKey<FormState>();
   final _nombreRecibioController = TextEditingController();
   final _dijoSerController = TextEditingController();
@@ -28,8 +49,22 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
   String _selectedOptionFormaConstatacion = '--Seleccionar--';
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
-
   String? radioDocumentoPorGenerar = "elemento_1";
+
+  Future<void> _getInspeccion() async {
+    // Inicializa la base de datos
+    var db = await DatabaseHelper.instance.database;
+    // Consulta el registro de la tabla inspecciones
+    List<Map<String, Object?>>? inspeccion = await db?.query(
+      DatabaseHelper.tableInspeccion,
+      where: 'inspeccion_id = ?',
+      whereArgs: [widget.inspeccionId],
+    );
+    _inspeccion = inspeccion ?? [];
+
+    // Actualiza el estado del widget con los registros obtenidos
+    setState(() {});
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -44,7 +79,6 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
       });
     }
   }
-
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked =
         await showTimePicker(context: context, initialTime: _selectedTime);
@@ -55,13 +89,101 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    if(!_inspeccion.isNotEmpty){
+      return const CircularProgressIndicator();
+    }else{
+       normatividadId = _inspeccion.first[DatabaseHelper.columnNormativaVersionIdInspeccion];
+       switch (normatividadId) {
+         case 1:
+           normatividad = 'SIAPI 2021';
+           break;
+         case 2:
+           normatividad = 'NORMATIVIDAD PRUEBAS QA';
+           break;
+         case 3:
+           normatividad = 'NORMATIVIDAD NL';
+           break;
+         case 4:
+           normatividad = 'NORMATIVIDAD PRUEBA';
+           break;
+         case 5:
+           normatividad = 'NORMATIVIDAD SIAPI SIPAS';
+           break;
+         default:
+           normatividad = '';
+       }
+       nombreRazonSocial = _inspeccion.first[DatabaseHelper.columnInCtRazonSocialInspeccion];
+       domicilio = _inspeccion.first[DatabaseHelper.columnInDomicilioInspeccionInspeccion];
+       fechaInspeccion = _inspeccion.first[DatabaseHelper.columnInFecInspeccionInspeccion];
+       expediente = _inspeccion.first[DatabaseHelper.columnInNumExpedienteInspeccion];
+       tipoActuacion = 'Extraordinaria'; // no se encuentra en la db
+       subtipo_actuacion_id = _inspeccion.first[DatabaseHelper.columnSubtipoInspeccionIdInspeccion];
+       switch (subtipo_actuacion_id) {
+         case 1:
+           subtipo_actuacion = 'Inicial';
+           break;
+         case 2:
+           subtipo_actuacion = 'Periodica';
+           break;
+         case 3:
+           subtipo_actuacion = 'Extraordinaria';
+           break;
+         case 4:
+           subtipo_actuacion = 'Comprobacion de medidas';
+           break;
+         case 5:
+           subtipo_actuacion = 'Extraordinaria de orientacion y asesoria';
+           break;
+         default:
+           subtipo_actuacion = '';
+       }
+
+       materia_id = _inspeccion.first[DatabaseHelper.columnMateriaIdInspeccion];
+       switch (materia_id) {
+         case 1:
+           tipoMateria = 'Seguridad e Higiene';
+           break;
+         case 2:
+           tipoMateria = 'Condiciones generales de trabajo';
+           break;
+         case 3:
+           tipoMateria = 'Capacitación y adiestramiento ';
+           break;
+         case 4:
+           tipoMateria = 'Constatación y actualización de datos';
+           break;
+         case 5:
+           tipoMateria = 'Otra';
+           break;
+         default:
+           tipoMateria = '';
+       }
+       alcance_id = _inspeccion.first[DatabaseHelper.columnInAlcanceInspeccion];
+       switch (alcance_id) {
+         case 1:
+           alcance = 'Específico';
+           break;
+         case 2:
+           alcance = 'No Específico';
+           break;
+         case 3:
+           alcance = 'Específico';
+           break;
+         case 4:
+           alcance = 'No Específico';
+           break;
+         case 5:
+           alcance = 'Específico';
+           break;
+         default:
+           tipoMateria = '';
+       }
+       expidioCitatorio_id = _inspeccion.first[DatabaseHelper.columnInGenerarCitatorioInspeccion];
+       expidioCitatorio =(expidioCitatorio_id == 1) ? 'Sí' : 'No';
+    }
     return Scaffold(
-      appBar: CustomAppBar(
-        titleText: widget.titulo,
-      ),
       //contenedor principal
       body: SingleChildScrollView(
         child: ConstrainedBox(
@@ -114,8 +236,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.fromLTRB(2, 0, 0, 0),
-                                  child: Text(
-                                    'Normatividad Pruebas QA',
+                                  child: Text(normatividad,
                                     style: TextStyle(
                                       color: Colors.teal[600],
                                       fontWeight: FontWeight.bold,
@@ -180,7 +301,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      Text('JANEL S.A. DE C.V.'),
+                                      Text(nombreRazonSocial),
                                     ],
                                   ),
                                 ),
@@ -197,9 +318,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      Text(
-                                        'LAGO ZURICH PLAZA CARSO No. 245, Interior 14, Colonia AMPLIACION GRANADA C.P. 11529, MIGUEL HIDALGO, DISTRITO FEDERAL,.',
-                                      ),
+                                      Text(domicilio),
                                     ],
                                   ),
                                 ),
@@ -259,8 +378,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text(
-                                          '2 febrero 2023 Hora 01:00 p.m.'),
+                                      Text(fechaInspeccion),
                                     ],
                                   ),
                                 ),
@@ -277,7 +395,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      Text('221/000028/2023'),
+                                      Text(expediente),
                                     ],
                                   ),
                                 ),
@@ -294,7 +412,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text('Extraordinaria'),
+                                      Text(tipoActuacion),
                                     ],
                                   ),
                                 ),
@@ -320,7 +438,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text('Extraordinaria'),
+                                      Text(subtipo_actuacion ?? ''),
                                     ],
                                   ),
                                 ),
@@ -337,8 +455,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text(
-                                          'Condiciones generales de trabajo'),
+                                      Text(tipoMateria),
                                     ],
                                   ),
                                 ),
@@ -355,7 +472,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text('Específico'),
+                                      Text(alcance),
                                     ],
                                   ),
                                 ),
@@ -417,7 +534,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text('Sí'),
+                                      Text(expidioCitatorio),
                                     ],
                                   ),
                                 ),
@@ -556,11 +673,12 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                               );
                                             },
                                             validator: (value) {
-                                              if (value == null || value == '--Seleccionar--') {
+                                              /*if (value == null || value == '--Seleccionar--') {
                                                 return 'Por favor selecciona una opción';
                                               }
                                               return null;
-                                            },
+                                              */
+                                            }
                                           ),
                                         ),
                                       ],
@@ -855,16 +973,16 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                           const SizedBox(
                             height: 10,
                           ),
-                          IntrinsicHeight(
+                          const IntrinsicHeight(
                             child: Row(
-                              children: const [
+                              children:  [
                                  Expanded(
                                   flex: 1,
-                                  child:  CargarDocumentoWidget(titleText: 'Orden de inspección',),
+                                  child: CargarDocumentoWidget(titleText: 'Orden de inspección',),
                                 ),
                                  Expanded(
                                   flex: 1,
-                                  child:  CargarDocumentoWidget(titleText: 'Citatorio',),
+                                  child: CargarDocumentoWidget(titleText: 'Citatorio',),
                                 ),
                                  Expanded(
                                   flex: 1,
@@ -876,9 +994,9 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                           const SizedBox(
                             height: 10,
                           ),
-                          IntrinsicHeight(
+                          const IntrinsicHeight(
                             child: Row(
-                              children: const [
+                              children:  [
                                 Expanded(
                                   flex: 1,
                                   child: CargarDocumentoWidget(titleText: 'Guía de derechos y obligaciones',),
@@ -930,9 +1048,9 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                               ),
                             ),
                           ),
-                          IntrinsicHeight(
+                          const IntrinsicHeight(
                             child: Row(
-                              children: const [],
+                              children:  [],
                             ),
                           ),
                         ],
@@ -1008,8 +1126,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                   },
                                 ),
                               );
-
-                              if (_formularioDatosGenerales.currentState != null && _formularioDatosGenerales.currentState!.validate()) {
+                              //_formularioDatosGenerales.currentState != null && _formularioDatosGenerales.currentState!.validate()
+                              if (true) {
                                 // Guardar el valor en la base de datos
                                 final recibio_empresa = _radioRecibioEmpresa;
                                 final quedo_pegado = _radioSeDejoPegado;
