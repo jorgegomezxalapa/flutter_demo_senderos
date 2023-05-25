@@ -399,12 +399,15 @@ class DatabaseHelper {
   // Inserta un registro en la tabla notificacion
   Future<int?> insertNotificacion(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db?.insert(tableNotificacion, row);
+    var registro = await db?.insert(tableNotificacion, row);
+
+    return registro;
   }
   //actualiza un registro de la tabla notificacion
   Future<int?> updateNotificacion(int id, Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db?.update(tableNotificacion, row, where: '$columnNotificacionId = ?', whereArgs: [id]);
+   await db?.update(tableNotificacion, row, where: '$columnNotificacionId = ?', whereArgs: [id]);
+    return id;
   }
 
   //Inserta un registro en la tabla de paises

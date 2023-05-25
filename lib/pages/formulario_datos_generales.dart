@@ -2,35 +2,7 @@ import 'package:air_senderos/database/handler/database_helper.dart';
 import 'package:air_senderos/widgets/cargar_documento_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-
-
-class SelectorMotivo {
-  final int id;
-  final String texto;
-
-  SelectorMotivo(this.id, this.texto);
-}
-
-List<SelectorMotivo> motivosOpciones = [
-  SelectorMotivo(0, 'Seleccionar'),
-  SelectorMotivo(1, 'El domicilio señalado no existe'),
-  SelectorMotivo(2, 'El domicilio no corresponde al centro de trabajo'),
-  SelectorMotivo(3, 'Otro motivo')
-];
-
-class SelectorFormaConstatacion {
-  final int id;
-  final String texto;
-
-  SelectorFormaConstatacion(this.id, this.texto);
-}
-
-List<SelectorFormaConstatacion> formasOpciones = [
-  SelectorFormaConstatacion(0, 'Seleccionar'),
-  SelectorFormaConstatacion(1, 'Nomenclatura de la calle y letrero visible en el exterior'),
-  SelectorFormaConstatacion(2, 'Aviso de inscripcion al sat'),
-  SelectorFormaConstatacion(3, 'Otra')
-];
+import 'package:air_senderos/pages/widgets/selects/selects_formulario_datos_generales.dart';
 
 class FormularioDatosGenerales extends StatefulWidget {
   final int? inspeccionId;
@@ -43,8 +15,10 @@ class FormularioDatosGenerales extends StatefulWidget {
 }
 
 class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
+
   late List<Map<String, dynamic>> _inspeccion = [];
   late List<Map<String, dynamic>> _inspeccionNotificacion = [];
+  int? notificacionId;
 
   @override
   void initState() {
@@ -54,7 +28,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
   }
 
   //variables de consulta
-  String normatividad = '';
+  String? normatividad;
   int? normatividadId;
   String? nombreRazonSocial;
   String? domicilio;
@@ -83,6 +57,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
   TimeOfDay? _selectedTime;
   int? radioDocumentoPorGenerar;
 
+  //Obtiene el registro de la inspeccion
   Future<void> _getInspeccion() async {
     // Inicializa la base de datos
     var db = await DatabaseHelper.instance.database;
@@ -93,11 +68,12 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
       whereArgs: [widget.inspeccionId],
     );
     _inspeccion = inspeccion ?? [];
-
     // Actualiza el estado del widget con los registros obtenidos
+    _asignarVariablesDomInspeccion();
     setState(() {});
   }
 
+  //obtiene el registro de la notificacion si es que existe
   Future<void> _getInspeccionNotificacion() async {
     // Inicializa la base de datos
     var db = await DatabaseHelper.instance.database;
@@ -108,125 +84,145 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
       whereArgs: [widget.inspeccionId],
     );
     _inspeccionNotificacion = inspeccionNotificacion ?? [];
+   if(_inspeccionNotificacion.isNotEmpty){
+     notificacionId = _inspeccionNotificacion.first[DatabaseHelper.columnNotificacionId];
+     _asignarVariablesDomNotificacion();
+   }
+    // Actualiza el estado del widget con los registros obtenidos
+    setState(() {});
+  }
 
-    //update de DOM
-    normatividadId =
-    _inspeccion.first[DatabaseHelper.columnNormativaVersionIdInspeccion];
-    switch (normatividadId) {
-      case 1:
-        normatividad = 'SIAPI 2021';
-        break;
-      case 2:
-        normatividad = 'NORMATIVIDAD PRUEBAS QA';
-        break;
-      case 3:
-        normatividad = 'NORMATIVIDAD NL';
-        break;
-      case 4:
-        normatividad = 'NORMATIVIDAD PRUEBA';
-        break;
-      case 5:
-        normatividad = 'NORMATIVIDAD SIAPI SIPAS';
-        break;
-      default:
-        normatividad = '';
-    }
-    nombreRazonSocial =
-    _inspeccion.first[DatabaseHelper.columnInCtRazonSocialInspeccion];
-    domicilio = _inspeccion
-        .first[DatabaseHelper.columnInDomicilioInspeccionInspeccion];
-    fechaInspeccion =
-    _inspeccion.first[DatabaseHelper.columnInFecInspeccionInspeccion];
-    expediente =
-    _inspeccion.first[DatabaseHelper.columnInNumExpedienteInspeccion];
-    tipoActuacion = 'Extraordinaria'; // no se encuentra en la db
-    subtipo_actuacion_id =
-    _inspeccion.first[DatabaseHelper.columnSubtipoInspeccionIdInspeccion];
-    switch (subtipo_actuacion_id) {
-      case 1:
-        subtipo_actuacion = 'Inicial';
-        break;
-      case 2:
-        subtipo_actuacion = 'Periodica';
-        break;
-      case 3:
-        subtipo_actuacion = 'Extraordinaria';
-        break;
-      case 4:
-        subtipo_actuacion = 'Comprobacion de medidas';
-        break;
-      case 5:
-        subtipo_actuacion = 'Extraordinaria de orientacion y asesoria';
-        break;
-      default:
-        subtipo_actuacion = '';
-    }
+  //Actualiza el DOM de la inspeccion
+  void _asignarVariablesDomInspeccion() {
+    if(_inspeccion.isNotEmpty){
+      normatividadId =
+      _inspeccion.first[DatabaseHelper.columnNormativaVersionIdInspeccion];
+      switch (normatividadId) {
+        case 1:
+          normatividad = 'SIAPI 2021';
+          break;
+        case 2:
+          normatividad = 'NORMATIVIDAD PRUEBAS QA';
+          break;
+        case 3:
+          normatividad = 'NORMATIVIDAD NL';
+          break;
+        case 4:
+          normatividad = 'NORMATIVIDAD PRUEBA';
+          break;
+        case 5:
+          normatividad = 'NORMATIVIDAD SIAPI SIPAS';
+          break;
+        default:
+          normatividad = '';
+      }
+      nombreRazonSocial =
+      _inspeccion.first[DatabaseHelper.columnInCtRazonSocialInspeccion];
+      domicilio = _inspeccion
+          .first[DatabaseHelper.columnInDomicilioInspeccionInspeccion];
+      fechaInspeccion =
+      _inspeccion.first[DatabaseHelper.columnInFecInspeccionInspeccion];
+      expediente =
+      _inspeccion.first[DatabaseHelper.columnInNumExpedienteInspeccion];
+      tipoActuacion = 'Extraordinaria'; // no se encuentra en la db
+      subtipo_actuacion_id =
+      _inspeccion.first[DatabaseHelper.columnSubtipoInspeccionIdInspeccion];
+      switch (subtipo_actuacion_id) {
+        case 1:
+          subtipo_actuacion = 'Inicial';
+          break;
+        case 2:
+          subtipo_actuacion = 'Periodica';
+          break;
+        case 3:
+          subtipo_actuacion = 'Extraordinaria';
+          break;
+        case 4:
+          subtipo_actuacion = 'Comprobacion de medidas';
+          break;
+        case 5:
+          subtipo_actuacion = 'Extraordinaria de orientacion y asesoria';
+          break;
+        default:
+          subtipo_actuacion = '';
+      }
 
-    materia_id = _inspeccion.first[DatabaseHelper.columnMateriaIdInspeccion];
-    switch (materia_id) {
-      case 1:
-        tipoMateria = 'Seguridad e Higiene';
-        break;
-      case 2:
-        tipoMateria = 'Condiciones generales de trabajo';
-        break;
-      case 3:
-        tipoMateria = 'Capacitación y adiestramiento ';
-        break;
-      case 4:
-        tipoMateria = 'Constatación y actualización de datos';
-        break;
-      case 5:
-        tipoMateria = 'Otra';
-        break;
-      default:
-        tipoMateria = '';
+      materia_id = _inspeccion.first[DatabaseHelper.columnMateriaIdInspeccion];
+      switch (materia_id) {
+        case 1:
+          tipoMateria = 'Seguridad e Higiene';
+          break;
+        case 2:
+          tipoMateria = 'Condiciones generales de trabajo';
+          break;
+        case 3:
+          tipoMateria = 'Capacitación y adiestramiento ';
+          break;
+        case 4:
+          tipoMateria = 'Constatación y actualización de datos';
+          break;
+        case 5:
+          tipoMateria = 'Otra';
+          break;
+        default:
+          tipoMateria = '';
+      }
+      alcance_id = _inspeccion.first[DatabaseHelper.columnInAlcanceInspeccion];
+      switch (alcance_id) {
+        case 1:
+          alcance = 'Específico';
+          break;
+        case 2:
+          alcance = 'No Específico';
+          break;
+        case 3:
+          alcance = 'Específico';
+          break;
+        case 4:
+          alcance = 'No Específico';
+          break;
+        case 5:
+          alcance = 'Específico';
+          break;
+        default:
+          tipoMateria = '';
+      }
+      expidioCitatorio_id =
+      _inspeccion.first[DatabaseHelper.columnInGenerarCitatorioInspeccion];
+      expidioCitatorio_id = (expidioCitatorio_id == 1) ? 1 : 0;
+      expidioCitatorio = (expidioCitatorio_id == 1) ? 'Sí' : 'No';
     }
-    alcance_id = _inspeccion.first[DatabaseHelper.columnInAlcanceInspeccion];
-    switch (alcance_id) {
-      case 1:
-        alcance = 'Específico';
-        break;
-      case 2:
-        alcance = 'No Específico';
-        break;
-      case 3:
-        alcance = 'Específico';
-        break;
-      case 4:
-        alcance = 'No Específico';
-        break;
-      case 5:
-        alcance = 'Específico';
-        break;
-      default:
-        tipoMateria = '';
-    }
-    expidioCitatorio_id =
-    _inspeccion.first[DatabaseHelper.columnInGenerarCitatorioInspeccion];
-    expidioCitatorio_id = (expidioCitatorio_id == 1) ? 1 : 0;
-    expidioCitatorio = (expidioCitatorio_id == 1) ? 'Sí' : 'No';
+  }
+
+  //actualiza el DOM de la notificacion
+  void _asignarVariablesDomNotificacion() {
     String? dijoSer;
     String? nombrePersonaRecibio;
+
     if (_inspeccionNotificacion.isNotEmpty) {
+
       dijoSer = _inspeccionNotificacion
           .first[DatabaseHelper.columnNotifDijoSerNotificacion];
+
       nombrePersonaRecibio = _inspeccionNotificacion
           .first[DatabaseHelper.columnNotifNombreRecibioNotificacion];
+
       _radioRecibioEmpresa = _inspeccionNotificacion
           .first[DatabaseHelper.columnNotifSeRecibioNotificacion];
+
       _radioSeDejoPegado = _inspeccionNotificacion
           .first[DatabaseHelper.columnNotifQuedoPegadoNotificacion];
       _selectedOptionMotivo = _inspeccionNotificacion
           .first[DatabaseHelper.columnNotifMotivoNoEntregaIdNotificacion];
+
       _selectedOptionFormaConstatacion = _inspeccionNotificacion
           .first[DatabaseHelper.columnNotifFormaConstatacionIdNotificacion];
       radioDocumentoPorGenerar = _inspeccionNotificacion
           .first[DatabaseHelper.columnTipoDocumentoIdNotificacion];
       fechaHoraEntregaSting = _inspeccionNotificacion
           .first[DatabaseHelper.columnNotifFecEntregaNotificacion];
-     if(_inspeccionNotificacion
-         .first[DatabaseHelper.columnNotifFecEntregaNotificacion] != null){
+      if(_inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifFecEntregaNotificacion] != null){
         final String dateTimeString = _inspeccionNotificacion
             .first[DatabaseHelper.columnNotifFecEntregaNotificacion]; // This is the date and time string from your database
         final DateTime dateTime = DateTime.parse(dateTimeString);
@@ -235,13 +231,10 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
         final String formattedDate = DateFormat('d MMMM yyyy', 'es').format(dateTime);
         final String formattedTime = DateFormat('h:mm a', 'es').format(dateTime);
         fechaHoraEntregaSting = '$formattedDate Hora: $formattedTime';
-     }
-
+      }
     }
     _dijoSerController = TextEditingController(text: dijoSer);
     _nombreRecibioController = TextEditingController(text: nombrePersonaRecibio);
-    // Actualiza el estado del widget con los registros obtenidos
-    setState(() {});
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -256,7 +249,11 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
     if (picked != null && picked != _selectedDate) {
       _selectedDate = picked;
     }
+    _actualizarDomFechaSeleccionada();
+    setState(() {});
+  }
 
+  void _actualizarDomFechaSeleccionada(){
     if (_selectedDate != null && _selectedTime != null) {
       final DateTime dateTime = DateTime(
         _selectedDate!.year,
@@ -269,9 +266,6 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
       final String formattedTime = DateFormat('h:mm a', 'es').format(dateTime);
       fechaHoraEntregaSting = '$formattedDate Hora: $formattedTime';
     }
-
-
-    setState(() {});
   }
 
 
@@ -282,32 +276,18 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
     if (picked != null && picked != _selectedTime) {
       _selectedTime = picked;
     }
-    if (_selectedDate != null && _selectedTime != null) {
-      final DateTime dateTime = DateTime(
-        _selectedDate!.year,
-        _selectedDate!.month,
-        _selectedDate!.day,
-        _selectedTime!.hour,
-        _selectedTime!.minute,
-      );
-      final String formattedDate = DateFormat('d MMMM yyyy', 'es').format(dateTime);
-      final String formattedTime = DateFormat('h:mm a', 'es').format(dateTime);
-      fechaHoraEntregaSting = '$formattedDate Hora: $formattedTime';
-      // You can now use the formattedDateTime variable to display the date and time in the desired format
-    }
-
+    _actualizarDomFechaSeleccionada();
     setState(() {});
   }
 
-
   @override
   Widget build(BuildContext context) {
-    if (_inspeccion.isEmpty) {
-      return const CircularProgressIndicator();
-    }
     return Scaffold(
-      //contenedor principal
-      body: SingleChildScrollView(
+      body: _inspeccion.isEmpty
+          ?
+      const CircularProgressIndicator()
+          :
+      SingleChildScrollView(
         child: ConstrainedBox(
           constraints: const BoxConstraints(),
           child: Container(
@@ -361,7 +341,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                   padding:
                                       const EdgeInsets.fromLTRB(2, 0, 0, 0),
                                   child: Text(
-                                    normatividad,
+                                    normatividad??'',
                                     style: TextStyle(
                                       color: Colors.teal[600],
                                       fontWeight: FontWeight.bold,
@@ -1316,7 +1296,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 DatabaseHelper.columnInspeccionIdNotificacion: inspeccionId,
                                 DatabaseHelper.columnNotifSeRecibioNotificacion: recibioEmpresa,
                                 DatabaseHelper.columnNotifQuedoPegadoNotificacion: quedoPegado,
-                                DatabaseHelper.columnNotifOtroMotivoNotificacion: motivo,
+                                DatabaseHelper.columnNotifMotivoNoEntregaIdNotificacion: motivo,
                                 DatabaseHelper.columnNotifFormaConstatacionIdNotificacion: formaConstatacion,
                                 DatabaseHelper.columnNotifFecEntregaNotificacion: fechaEntrega,
                                 DatabaseHelper.columnNotifNombreRecibioNotificacion: nombre_recibio,
@@ -1326,14 +1306,17 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
 
                               var db = await DatabaseHelper.instance.database;
                               int? query_id;
-                              if (_inspeccionNotificacion.isNotEmpty) {
-                                var notificacionId = _inspeccionNotificacion.first[DatabaseHelper.columnNotificacionId];
-
-                               query_id = await DatabaseHelper.instance.updateNotificacion(notificacionId, notificacionRow);
+                              if (notificacionId != null) {
+                               query_id = await DatabaseHelper.instance.updateNotificacion(notificacionId!, notificacionRow);
                               } else {
                                 query_id = await DatabaseHelper.instance.insertNotificacion(notificacionRow);
+                                notificacionId = query_id;
                               }
-                              if(query_id == 1){
+                              _getInspeccionNotificacion();
+                              setState(() {});
+                              print(notificacionId);
+
+                              if(query_id is int){
                                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
                               }
 
