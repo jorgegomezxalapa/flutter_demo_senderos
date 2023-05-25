@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:air_senderos/pages/inspecciones.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -112,6 +113,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     var isOnline = properties.isOnline;
     var isAutorized = properties.isAutorized;
     var haveCredentials = properties.haveCredentials;
+    return ModuloInspeccion();
     return isAutorized
         ? (haveCredentials ? const CredentialsPage() : const LoginPage())
         : const DesktopPage();
