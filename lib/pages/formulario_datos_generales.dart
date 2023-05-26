@@ -1,11 +1,13 @@
 import 'package:air_senderos/database/handler/database_helper.dart';
 import 'package:air_senderos/widgets/cargar_documento_widget.dart';
-import 'package:air_senderos/widgets/my_app_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:air_senderos/pages/widgets/selects/selects_formulario_datos_generales.dart';
 
 class FormularioDatosGenerales extends StatefulWidget {
+  final int? inspeccionId;
   String? titulo = 'Formulario Datos Generales';
-  FormularioDatosGenerales({super.key});
+  FormularioDatosGenerales({super.key, @required this.inspeccionId});
 
   @override
   FormularioDatosGeneralesState createState() =>
@@ -13,55 +15,279 @@ class FormularioDatosGenerales extends StatefulWidget {
 }
 
 class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
+
+  late List<Map<String, dynamic>> _inspeccion = [];
+  late List<Map<String, dynamic>> _inspeccionNotificacion = [];
+  int? notificacionId;
+
   @override
   void initState() {
     super.initState();
+    _getInspeccion();
+    _getInspeccionNotificacion();
   }
 
-  final _formularioDatosGenerales = GlobalKey<FormState>();
-  final _nombreRecibioController = TextEditingController();
-  final _dijoSerController = TextEditingController();
-  String _radioRecibioEmpresa = 'Sí';
-  String _radioSeDejoPegado = 'Sí';
-  String _selectedOptionMotivo = '--Seleccionar--';
-  String _selectedOptionFormaConstatacion = '--Seleccionar--';
-  DateTime _selectedDate = DateTime.now();
-  TimeOfDay _selectedTime = TimeOfDay.now();
+  //variables de consulta
+  String? normatividad;
+  int? normatividadId;
+  String? nombreRazonSocial;
+  String? domicilio;
+  String? fechaInspeccion;
+  String? expediente;
+  String? tipoActuacion ; // no se encuentra en la db
+  int? subtipo_actuacion_id;
+  String? subtipo_actuacion;
+  int? materia_id;
+  String? tipoMateria;
+  int? alcance_id;
+  String? alcance;
+  String? expidioCitatorio;
+  int? expidioCitatorio_id;
+  String? fechaHoraEntregaSting;
 
-  String? radioDocumentoPorGenerar = "elemento_1";
+  //variables del formulario
+  final _formularioDatosGenerales = GlobalKey<FormState>();
+  var _nombreRecibioController = TextEditingController();
+  var _dijoSerController = TextEditingController();
+  int? _radioRecibioEmpresa;
+  int? _radioSeDejoPegado;
+  int? _selectedOptionMotivo;
+  int? _selectedOptionFormaConstatacion;
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
+  int? radioDocumentoPorGenerar;
+
+  //Obtiene el registro de la inspeccion
+  Future<void> _getInspeccion() async {
+    // Inicializa la base de datos
+    var db = await DatabaseHelper.instance.database;
+    // Consulta el registro de la tabla inspecciones
+    List<Map<String, Object?>>? inspeccion = await db?.query(
+      DatabaseHelper.tableInspeccion,
+      where: 'inspeccion_id = ?',
+      whereArgs: [widget.inspeccionId],
+    );
+    _inspeccion = inspeccion ?? [];
+    // Actualiza el estado del widget con los registros obtenidos
+    _asignarVariablesDomInspeccion();
+    setState(() {});
+  }
+
+  //obtiene el registro de la notificacion si es que existe
+  Future<void> _getInspeccionNotificacion() async {
+    // Inicializa la base de datos
+    var db = await DatabaseHelper.instance.database;
+    // Consulta el registro de la tabla inspecciones
+    List<Map<String, Object?>>? inspeccionNotificacion = await db?.query(
+      DatabaseHelper.tableNotificacion,
+      where: 'inspeccion_id = ?',
+      whereArgs: [widget.inspeccionId],
+    );
+    _inspeccionNotificacion = inspeccionNotificacion ?? [];
+   if(_inspeccionNotificacion.isNotEmpty){
+     notificacionId = _inspeccionNotificacion.first[DatabaseHelper.columnNotificacionId];
+     _asignarVariablesDomNotificacion();
+   }
+    // Actualiza el estado del widget con los registros obtenidos
+    setState(() {});
+  }
+
+  //Actualiza el DOM de la inspeccion
+  void _asignarVariablesDomInspeccion() {
+    if(_inspeccion.isNotEmpty){
+      normatividadId =
+      _inspeccion.first[DatabaseHelper.columnNormativaVersionIdInspeccion];
+      switch (normatividadId) {
+        case 1:
+          normatividad = 'SIAPI 2021';
+          break;
+        case 2:
+          normatividad = 'NORMATIVIDAD PRUEBAS QA';
+          break;
+        case 3:
+          normatividad = 'NORMATIVIDAD NL';
+          break;
+        case 4:
+          normatividad = 'NORMATIVIDAD PRUEBA';
+          break;
+        case 5:
+          normatividad = 'NORMATIVIDAD SIAPI SIPAS';
+          break;
+        default:
+          normatividad = '';
+      }
+      nombreRazonSocial =
+      _inspeccion.first[DatabaseHelper.columnInCtRazonSocialInspeccion];
+      domicilio = _inspeccion
+          .first[DatabaseHelper.columnInDomicilioInspeccionInspeccion];
+      fechaInspeccion =
+      _inspeccion.first[DatabaseHelper.columnInFecInspeccionInspeccion];
+      expediente =
+      _inspeccion.first[DatabaseHelper.columnInNumExpedienteInspeccion];
+      tipoActuacion = 'Extraordinaria'; // no se encuentra en la db
+      subtipo_actuacion_id =
+      _inspeccion.first[DatabaseHelper.columnSubtipoInspeccionIdInspeccion];
+      switch (subtipo_actuacion_id) {
+        case 1:
+          subtipo_actuacion = 'Inicial';
+          break;
+        case 2:
+          subtipo_actuacion = 'Periodica';
+          break;
+        case 3:
+          subtipo_actuacion = 'Extraordinaria';
+          break;
+        case 4:
+          subtipo_actuacion = 'Comprobacion de medidas';
+          break;
+        case 5:
+          subtipo_actuacion = 'Extraordinaria de orientacion y asesoria';
+          break;
+        default:
+          subtipo_actuacion = '';
+      }
+
+      materia_id = _inspeccion.first[DatabaseHelper.columnMateriaIdInspeccion];
+      switch (materia_id) {
+        case 1:
+          tipoMateria = 'Seguridad e Higiene';
+          break;
+        case 2:
+          tipoMateria = 'Condiciones generales de trabajo';
+          break;
+        case 3:
+          tipoMateria = 'Capacitación y adiestramiento ';
+          break;
+        case 4:
+          tipoMateria = 'Constatación y actualización de datos';
+          break;
+        case 5:
+          tipoMateria = 'Otra';
+          break;
+        default:
+          tipoMateria = '';
+      }
+      alcance_id = _inspeccion.first[DatabaseHelper.columnInAlcanceInspeccion];
+      switch (alcance_id) {
+        case 1:
+          alcance = 'Específico';
+          break;
+        case 2:
+          alcance = 'No Específico';
+          break;
+        case 3:
+          alcance = 'Específico';
+          break;
+        case 4:
+          alcance = 'No Específico';
+          break;
+        case 5:
+          alcance = 'Específico';
+          break;
+        default:
+          tipoMateria = '';
+      }
+      expidioCitatorio_id =
+      _inspeccion.first[DatabaseHelper.columnInGenerarCitatorioInspeccion];
+      expidioCitatorio_id = (expidioCitatorio_id == 1) ? 1 : 0;
+      expidioCitatorio = (expidioCitatorio_id == 1) ? 'Sí' : 'No';
+    }
+  }
+
+  //actualiza el DOM de la notificacion
+  void _asignarVariablesDomNotificacion() {
+    String? dijoSer;
+    String? nombrePersonaRecibio;
+
+    if (_inspeccionNotificacion.isNotEmpty) {
+
+      dijoSer = _inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifDijoSerNotificacion];
+
+      nombrePersonaRecibio = _inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifNombreRecibioNotificacion];
+
+      _radioRecibioEmpresa = _inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifSeRecibioNotificacion];
+
+      _radioSeDejoPegado = _inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifQuedoPegadoNotificacion];
+      _selectedOptionMotivo = _inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifMotivoNoEntregaIdNotificacion];
+
+      _selectedOptionFormaConstatacion = _inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifFormaConstatacionIdNotificacion];
+      radioDocumentoPorGenerar = _inspeccionNotificacion
+          .first[DatabaseHelper.columnTipoDocumentoIdNotificacion];
+      fechaHoraEntregaSting = _inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifFecEntregaNotificacion];
+      if(_inspeccionNotificacion
+          .first[DatabaseHelper.columnNotifFecEntregaNotificacion] != null){
+        final String dateTimeString = _inspeccionNotificacion
+            .first[DatabaseHelper.columnNotifFecEntregaNotificacion]; // This is the date and time string from your database
+        final DateTime dateTime = DateTime.parse(dateTimeString);
+        _selectedDate = dateTime;
+        _selectedTime = TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
+        final String formattedDate = DateFormat('d MMMM yyyy', 'es').format(dateTime);
+        final String formattedTime = DateFormat('h:mm a', 'es').format(dateTime);
+        fechaHoraEntregaSting = '$formattedDate Hora: $formattedTime';
+      }
+    }
+    _dijoSerController = TextEditingController(text: dijoSer);
+    _nombreRecibioController = TextEditingController(text: nombrePersonaRecibio);
+  }
 
   Future<void> _selectDate(BuildContext context) async {
+    final DateTime initialDate = _selectedDate ?? DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: initialDate,
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
     );
+
     if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
+      _selectedDate = picked;
+    }
+    _actualizarDomFechaSeleccionada();
+    setState(() {});
+  }
+
+  void _actualizarDomFechaSeleccionada(){
+    if (_selectedDate != null && _selectedTime != null) {
+      final DateTime dateTime = DateTime(
+        _selectedDate!.year,
+        _selectedDate!.month,
+        _selectedDate!.day,
+        _selectedTime!.hour,
+        _selectedTime!.minute,
+      );
+      final String formattedDate = DateFormat('d MMMM yyyy', 'es').format(dateTime);
+      final String formattedTime = DateFormat('h:mm a', 'es').format(dateTime);
+      fechaHoraEntregaSting = '$formattedDate Hora: $formattedTime';
     }
   }
 
+
   Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay initialTime = _selectedTime ?? TimeOfDay.now();
     final TimeOfDay? picked =
-        await showTimePicker(context: context, initialTime: _selectedTime);
+    await showTimePicker(context: context, initialTime: initialTime);
     if (picked != null && picked != _selectedTime) {
-      setState(() {
-        _selectedTime = picked;
-      });
+      _selectedTime = picked;
     }
+    _actualizarDomFechaSeleccionada();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        titleText: widget.titulo,
-      ),
-      //contenedor principal
-      body: SingleChildScrollView(
+      body: _inspeccion.isEmpty
+          ?
+      const CircularProgressIndicator()
+          :
+      SingleChildScrollView(
         child: ConstrainedBox(
           constraints: const BoxConstraints(),
           child: Container(
@@ -115,7 +341,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                   padding:
                                       const EdgeInsets.fromLTRB(2, 0, 0, 0),
                                   child: Text(
-                                    'Normatividad Pruebas QA',
+                                    normatividad??'',
                                     style: TextStyle(
                                       color: Colors.teal[600],
                                       fontWeight: FontWeight.bold,
@@ -181,7 +407,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      Text('JANEL S.A. DE C.V.'),
+                                      Text(nombreRazonSocial??''),
                                     ],
                                   ),
                                 ),
@@ -199,9 +425,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      Text(
-                                        'LAGO ZURICH PLAZA CARSO No. 245, Interior 14, Colonia AMPLIACION GRANADA C.P. 11529, MIGUEL HIDALGO, DISTRITO FEDERAL,.',
-                                      ),
+                                      Text(domicilio??''),
                                     ],
                                   ),
                                 ),
@@ -262,8 +486,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text(
-                                          '2 febrero 2023 Hora 01:00 p.m.'),
+                                      Text(fechaInspeccion??''),
                                     ],
                                   ),
                                 ),
@@ -281,7 +504,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      Text('221/000028/2023'),
+                                      Text(expediente??''),
                                     ],
                                   ),
                                 ),
@@ -299,7 +522,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text('Extraordinaria'),
+                                      Text(tipoActuacion??''),
                                     ],
                                   ),
                                 ),
@@ -326,7 +549,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text('Extraordinaria'),
+                                      Text(subtipo_actuacion ?? ''),
                                     ],
                                   ),
                                 ),
@@ -344,8 +567,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text(
-                                          'Condiciones generales de trabajo'),
+                                      Text(tipoMateria??''),
                                     ],
                                   ),
                                 ),
@@ -363,7 +585,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text('Específico'),
+                                      Text(alcance??''),
                                     ],
                                   ),
                                 ),
@@ -426,55 +648,58 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           fontSize: 12,
                                         ),
                                       ),
-                                      const Text('Sí'),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Recibió la empresa*',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[700],
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Radio(
-                                            value: 'Sí',
-                                            groupValue: _radioRecibioEmpresa,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _radioRecibioEmpresa = value!;
-                                              });
-                                            },
-                                          ),
-                                          const Text('Sí'),
-                                          Radio(
-                                            value: 'No',
-                                            groupValue: _radioRecibioEmpresa,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _radioRecibioEmpresa = value!;
-                                              });
-                                            },
-                                          ),
-                                          const Text('No'),
-                                        ],
-                                      ),
+                                      Text(expidioCitatorio??''),
                                     ],
                                   ),
                                 ),
                                 Expanded(
                                   flex: 1,
                                   child: Visibility(
-                                    visible: _radioRecibioEmpresa == 'No',
+                                    visible: expidioCitatorio_id == 1,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Recibió la empresa*',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[700],
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Radio(
+                                              value: 1,
+                                              groupValue: _radioRecibioEmpresa,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _radioRecibioEmpresa = value!;
+                                                });
+                                              },
+                                            ),
+                                            const Text('Sí'),
+                                            Radio(
+                                              value: 0,
+                                              groupValue: _radioRecibioEmpresa,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _radioRecibioEmpresa = value!;
+                                                });
+                                              },
+                                            ),
+                                            const Text('No'),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Visibility(
+                                    visible: _radioRecibioEmpresa == 0,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -490,7 +715,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                         Row(
                                           children: [
                                             Radio(
-                                              value: 'Sí',
+                                              value: 1,
                                               groupValue: _radioSeDejoPegado,
                                               onChanged: (value) {
                                                 setState(() {
@@ -500,7 +725,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                             ),
                                             const Text('Sí'),
                                             Radio(
-                                              value: 'No',
+                                              value: 0,
                                               groupValue: _radioSeDejoPegado,
                                               onChanged: (value) {
                                                 setState(() {
@@ -522,7 +747,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                             height: 10,
                           ),
                           Visibility(
-                            visible: _radioRecibioEmpresa == 'No',
+                            visible: _radioRecibioEmpresa == 0,
                             child: IntrinsicHeight(
                               child: Row(
                                 children: [
@@ -541,39 +766,28 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           ),
                                         ),
                                         Container(
-                                          child: FormField<String>(
+                                          child: FormField<int?>(
+                                            initialValue: _selectedOptionMotivo,
                                             builder:
-                                                (FormFieldState<String> state) {
-                                              return DropdownButton(
-                                                value: _selectedOptionMotivo,
-                                                onChanged: (String? newValue) {
+                                                (FormFieldState<int?> state) {
+                                              return DropdownButton<int?>(
+                                                value: state.value,
+                                                onChanged: (int? newValue) {
                                                   setState(() {
                                                     _selectedOptionMotivo =
                                                         newValue!;
                                                   });
                                                   state.didChange(newValue);
                                                 },
-                                                items: <String>[
-                                                  '--Seleccionar--',
-                                                  'Motivo uno',
-                                                  'Motivo dos',
-                                                  'Motivo tres'
-                                                ].map<DropdownMenuItem<String>>(
-                                                    (String value) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: value,
-                                                    child: Text(value),
+                                                items: motivosOpciones
+                                                    .map<DropdownMenuItem<int>>(
+                                                        (SelectorMotivo opcion) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: opcion.id,
+                                                    child: Text(opcion.texto),
                                                   );
                                                 }).toList(),
                                               );
-                                            },
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value == '--Seleccionar--') {
-                                                return 'Por favor selecciona una opción';
-                                              }
-                                              return null;
                                             },
                                           ),
                                         ),
@@ -592,193 +806,203 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                           const SizedBox(
                             height: 10,
                           ),
-                          IntrinsicHeight(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Forma de constatación de razón social y domicilio',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[700],
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      DropdownButton<String>(
-                                        value: _selectedOptionFormaConstatacion,
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            _selectedOptionFormaConstatacion =
-                                                newValue!;
-                                          });
-                                        },
-                                        items: <String>[
-                                          '--Seleccionar--',
-                                          'Motivo uno',
-                                          'Motivo dos',
-                                          'Motivo tres'
-                                        ].map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: _radioRecibioEmpresa == 'Sí',
-                                  child: Expanded(
+                          Visibility(
+                            visible: expidioCitatorio_id == 1,
+                            child: IntrinsicHeight(
+                              child: Row(
+                                children: [
+                                  Expanded(
                                     flex: 1,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Nombre de la persona que recibió',
+                                          'Forma de constatación de razón social y domicilio',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey[700],
                                             fontSize: 12,
                                           ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 10, 50, 20),
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: TextFormField(
-                                              key: const Key(
-                                                  '_nombreRecibioController'),
-                                              controller:
-                                                  _nombreRecibioController,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                              ),
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'Por favor ingrese un valor';
-                                                }
-                                                return null;
+                                        FormField<int?>(
+                                          initialValue: _selectedOptionFormaConstatacion,
+                                          builder:
+                                              (FormFieldState<int?> state) {
+                                            return DropdownButton<int?>(
+                                              value: state.value,
+                                              onChanged: (int? newValue) {
+                                                setState(() {
+                                                  _selectedOptionFormaConstatacion =
+                                                  newValue!;
+                                                });
+                                                state.didChange(newValue);
                                               },
-                                            ),
-                                          ),
+                                              items: formasOpciones
+                                                  .map<DropdownMenuItem<int>>(
+                                                      (SelectorFormaConstatacion forma) {
+                                                    return DropdownMenuItem<int>(
+                                                      value: forma.id,
+                                                      child: Text(forma.texto),
+                                                    );
+                                                  }).toList(),
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),
                                   ),
-                                ),
-                                Visibility(
-                                  visible: _radioRecibioEmpresa == 'Sí',
-                                  child: Expanded(
-                                    flex: 1,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Dijo ser(puesto)*',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[700],
-                                            fontSize: 12,
+                                  Visibility(
+                                    visible: _radioRecibioEmpresa == 1,
+                                    child: Expanded(
+                                      flex: 1,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Nombre de la persona que recibió',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[700],
+                                              fontSize: 12,
+                                            ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 10, 50, 20),
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: TextFormField(
-                                              key: const Key(
-                                                  '_dijoSerController'),
-                                              controller: _dijoSerController,
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'Por favor ingrese un valor';
-                                                }
-                                                return null;
-                                              },
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 10, 50, 20),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: TextFormField(
+                                                key: const Key(
+                                                    '_nombreRecibioController'),
+                                                controller:
+                                                    _nombreRecibioController,
+                                                decoration: const InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Por favor ingrese un valor';
+                                                  }
+                                                  return null;
+                                                },
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Visibility(
-                                  visible: _radioRecibioEmpresa != 'Sí',
-                                  child: Expanded(
-                                    flex: 1,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Fecha y hora de entrega*',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[700],
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        Column(
-                                          children: [
-                                            (_selectedDate != null &&
-                                                    _selectedTime != null)
-                                                ? Text(
-                                                    'Selected: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year} ${_selectedTime.hour}:${_selectedTime.minute}')
-                                                : const Text(
-                                                    'Fecha y hora de entrega*'),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: ElevatedButton(
-                                                    onPressed: () =>
-                                                        _selectDate(context),
-                                                    child: const Text('Fecha'),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: ElevatedButton(
-                                                    onPressed: () =>
-                                                        _selectTime(context),
-                                                    child: const Text('Hora'),
-                                                  ),
-                                                ),
-                                              ],
+                                  Visibility(
+                                    visible: _radioRecibioEmpresa == 1,
+                                    child: Expanded(
+                                      flex: 1,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Dijo ser(puesto)*',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[700],
+                                              fontSize: 12,
                                             ),
-                                          ],
-                                        ),
-                                      ],
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 10, 50, 20),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: TextFormField(
+                                                key: const Key(
+                                                    '_dijoSerController'),
+                                                controller: _dijoSerController,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Por favor ingrese un valor';
+                                                  }
+                                                  return null;
+                                                },
+                                                decoration: const InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Visibility(
-                                  visible: _radioRecibioEmpresa != 'Sí',
-                                  child: const Expanded(
-                                    flex: 1,
-                                    child: SizedBox(),
+                                  Visibility(
+                                    visible: _radioRecibioEmpresa == 0,
+                                    child: Expanded(
+                                      flex: 1,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(bottom: 5),
+                                            child: Text(
+                                              'Fecha y hora de entregass*',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[700],
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              _selectedDate != null && _selectedTime != null
+                                                  ?
+                                              Text(fechaHoraEntregaSting??'')
+                                                  :
+                                              const Text('Seleccionar fecha y hora')
+                                             ,
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(top: 8, right: 10),
+                                                    child: ElevatedButton(
+                                                      onPressed: () =>
+                                                          _selectDate(context),
+                                                      child: const Text('Fecha'),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(top: 8),
+                                                    child: ElevatedButton(
+                                                      onPressed: () =>
+                                                          _selectTime(context),
+                                                      child: const Text('Hora'),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  Visibility(
+                                    visible: _radioRecibioEmpresa == 0,
+                                    child: const Expanded(
+                                      flex: 1,
+                                      child: SizedBox(),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -787,14 +1011,15 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                         height: 10,
                       ),
                       Visibility(
-                        visible: _radioRecibioEmpresa == 'Sí',
+                        visible: (expidioCitatorio_id == 1 && _radioRecibioEmpresa == 1),
                         child: IntrinsicHeight(
                           child: Row(
                             children: [
                               Expanded(
                                 flex: 1,
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       'Fecha y hora de entrega*',
@@ -806,13 +1031,17 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                     ),
                                     Column(
                                       children: [
-                                        const Text('Fecha y hora de entrega*'),
+                                        _selectedDate != null && _selectedTime != null
+                                            ?
+                                        Text(fechaHoraEntregaSting??'')
+                                            :
+                                        const Text('Seleccionar fecha y hora'),
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(5.0),
+                                              const EdgeInsets.all(5.0),
                                               child: ElevatedButton(
                                                 onPressed: () =>
                                                     _selectDate(context),
@@ -821,7 +1050,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                             ),
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(5.0),
+                                              const EdgeInsets.all(5.0),
                                               child: ElevatedButton(
                                                 onPressed: () =>
                                                     _selectTime(context),
@@ -878,9 +1107,9 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                           const SizedBox(
                             height: 10,
                           ),
-                          IntrinsicHeight(
+                          const IntrinsicHeight(
                             child: Row(
-                              children: const [
+                              children: [
                                 Expanded(
                                   flex: 1,
                                   child: CargarDocumentoWidget(
@@ -905,9 +1134,9 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                           const SizedBox(
                             height: 10,
                           ),
-                          IntrinsicHeight(
+                          const IntrinsicHeight(
                             child: Row(
-                              children: const [
+                              children: [
                                 Expanded(
                                   flex: 1,
                                   child: CargarDocumentoWidget(
@@ -964,9 +1193,9 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                               ),
                             ),
                           ),
-                          IntrinsicHeight(
+                          const IntrinsicHeight(
                             child: Row(
-                              children: const [],
+                              children: [],
                             ),
                           ),
                         ],
@@ -978,31 +1207,31 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                           children: <Widget>[
                             RadioListTile(
                               title: const Text("Informe de comisión"),
-                              value: "elemento_1",
+                              value: 1,
                               groupValue: radioDocumentoPorGenerar,
                               onChanged: (value) {
                                 setState(() {
-                                  radioDocumentoPorGenerar = value;
+                                  radioDocumentoPorGenerar = value!;
                                 });
                               },
                             ),
                             RadioListTile(
                               title: const Text("Acta de inspección"),
-                              value: "elemento_2",
+                              value: 2,
                               groupValue: radioDocumentoPorGenerar,
                               onChanged: (value) {
                                 setState(() {
-                                  radioDocumentoPorGenerar = value;
+                                  radioDocumentoPorGenerar = value!;
                                 });
                               },
                             ),
                             RadioListTile(
                               title: const Text("Negativa patronal"),
-                              value: "elemento_3",
+                              value: 3,
                               groupValue: radioDocumentoPorGenerar,
                               onChanged: (value) {
                                 setState(() {
-                                  radioDocumentoPorGenerar = value;
+                                  radioDocumentoPorGenerar = value!;
                                 });
                               },
                             ),
@@ -1019,7 +1248,7 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                             padding: const EdgeInsets.only(right: 12),
                             child: ElevatedButton(
                               onPressed: () {
-                                // Acción al presionar el botón "Cancelar"
+                                Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
@@ -1036,69 +1265,68 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 content: const Text('Formulario guardado'),
                                 action: SnackBarAction(
                                   label: 'OK',
-                                  onPressed: () {
-                                    // Some code to undo the change.
-                                  },
+                                  onPressed: () {},
                                 ),
                               );
 
-                              if (_formularioDatosGenerales.currentState !=
-                                      null &&
-                                  _formularioDatosGenerales.currentState!
-                                      .validate()) {
-                                // Guardar el valor en la base de datos
-                                final recibio_empresa = _radioRecibioEmpresa;
-                                final quedo_pegado = _radioSeDejoPegado;
-                                final nombre_recibio =
-                                    _nombreRecibioController.text;
-                                final dijo_ser = _dijoSerController.text;
-                                final forma_constatacion =
-                                    _selectedOptionFormaConstatacion;
-                                final motivo = _selectedOptionMotivo;
-                                final fec_entrega =
-                                    '${_selectedDate.toLocal().toString().split(' ')[0]} ${_selectedTime.hour}:${_selectedTime.minute}';
-                                final tipo_documento = radioDocumentoPorGenerar;
 
-                                var db = await DatabaseHelper.instance.database;
-
-                                // Inserta un registro en la tabla personas
-                                int? id = await DatabaseHelper.instance
-                                    .insertNotificacion({
-                                  DatabaseHelper
-                                          .columnNotifSeRecibioNotificacion:
-                                      recibio_empresa,
-                                  DatabaseHelper
-                                          .columnNotifQuedoPegadoNotificacion:
-                                      quedo_pegado,
-                                  DatabaseHelper
-                                          .columnNotifNombreRecibioNotificacion:
-                                      nombre_recibio,
-                                  DatabaseHelper.columnNotifDijoSerNotificacion:
-                                      dijo_ser,
-                                  DatabaseHelper
-                                          .columnNotifFormaConstatacionIdNotificacion:
-                                      forma_constatacion,
-                                  DatabaseHelper
-                                          .columnNotifOtroMotivoNotificacion:
-                                      motivo,
-                                  DatabaseHelper
-                                          .columnNotifFecEntregaNotificacion:
-                                      fec_entrega,
-                                  DatabaseHelper
-                                          .columnTipoDocumentoIdNotificacion:
-                                      tipo_documento,
-                                });
-
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
+                              //Variablas finales del formulario
+                              final inspeccionId = widget.inspeccionId;
+                              final recibioEmpresa = (expidioCitatorio_id == 1) ? _radioRecibioEmpresa : null;
+                              final quedoPegado =( _radioRecibioEmpresa == 1 || _radioRecibioEmpresa == null) ? null : _radioSeDejoPegado;
+                              final motivo = ( _radioRecibioEmpresa == 1 || _radioRecibioEmpresa == null) ? null : _selectedOptionMotivo;
+                              final formaConstatacion = _selectedOptionFormaConstatacion;
+                              var fechaEntrega = null;
+                              if (expidioCitatorio_id == 1 && _selectedDate != null && _selectedTime != null) {
+                                final DateTime dateTime = DateTime(
+                                  _selectedDate!.year,
+                                  _selectedDate!.month,
+                                  _selectedDate!.day,
+                                  _selectedTime!.hour,
+                                  _selectedTime!.minute,
+                                );
+                                fechaEntrega = dateTime.toIso8601String();
                               }
+                              final nombre_recibio = (_radioRecibioEmpresa == 0) ? null : _nombreRecibioController.text;
+                              final dijoSer = (_radioRecibioEmpresa == 0) ? null : _dijoSerController.text;
+                              final tipoDocumento = radioDocumentoPorGenerar;
+
+                              //objeto para base de datos
+                              var notificacionRow = {
+                                DatabaseHelper.columnInspeccionIdNotificacion: inspeccionId,
+                                DatabaseHelper.columnNotifSeRecibioNotificacion: recibioEmpresa,
+                                DatabaseHelper.columnNotifQuedoPegadoNotificacion: quedoPegado,
+                                DatabaseHelper.columnNotifMotivoNoEntregaIdNotificacion: motivo,
+                                DatabaseHelper.columnNotifFormaConstatacionIdNotificacion: formaConstatacion,
+                                DatabaseHelper.columnNotifFecEntregaNotificacion: fechaEntrega,
+                                DatabaseHelper.columnNotifNombreRecibioNotificacion: nombre_recibio,
+                                DatabaseHelper.columnNotifDijoSerNotificacion: dijoSer,
+                                DatabaseHelper.columnTipoDocumentoIdNotificacion: tipoDocumento,
+                              };
+
+                              var db = await DatabaseHelper.instance.database;
+                              int? query_id;
+                              if (notificacionId != null) {
+                               query_id = await DatabaseHelper.instance.updateNotificacion(notificacionId!, notificacionRow);
+                              } else {
+                                query_id = await DatabaseHelper.instance.insertNotificacion(notificacionRow);
+                                notificacionId = query_id;
+                              }
+                              _getInspeccionNotificacion();
+                              setState(() {});
+                              print(notificacionId);
+
+                              if(query_id is int){
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              }
+
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.teal[800]),
                             child: const Text("Aceptar"),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
