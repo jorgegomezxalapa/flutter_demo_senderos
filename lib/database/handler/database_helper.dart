@@ -67,6 +67,80 @@ class DatabaseHelper {
   static const columnSysFecInserNotificacion = 'sys_fec_insert';
   static const columnSysUsrUpdateNotificacion = 'sys_usr_update';
   static const columnSysFecUpdateNotificacion = 'sys_fec_update';
+  //tabla inspeccion
+  static const tableInspeccion = 'inspeccion';
+  static const columnInspeccionIdInspeccion = 'inspeccion_id';
+  static const columnInspectorIdInspeccion = 'inspector_id';
+  static const columnNotificadorIdInspeccion = 'notificador_id';
+  static const columnMesIdInspeccion = 'mes_id';
+  static const columnMateriaIdInspeccion = 'materia_id';
+  static const columnFundamentoDesignacionIdInspeccion =
+      'fundamento_designacion_id';
+  static const columnMotivoInspeccionIdInspeccion = 'motivo_inspeccion_id';
+  static const columnSubtipoInspeccionIdInspeccion = 'subtipo_inspeccion_id';
+  static const columnOperativoIdInspeccion = 'operativo_id';
+  static const columnCveUrInspeccion = 'cve_ur';
+  static const columnCveRamaInspeccion = 'cve_rama';
+  static const columnCentroTrabajoIdInspeccion = 'centro_trabajo_id';
+  static const columnInAnioInspeccion = 'in_anio';
+  static const columnInNumExpedienteInspeccion = 'in_num_expediente';
+  static const columnInOtraSubmateriaInspeccion = 'in_otra_submateria';
+  static const columnInCtRfcInspeccion = 'in_ct_rfc';
+  static const columnInCtRazonSocialInspeccion = 'in_ct_razon_social';
+  static const columnInCtNombreInspeccion = 'in_ct_nombre';
+  static const columnInCtImssRegistroInspeccion = 'in_ct_imss_registro';
+  static const columnInCtClaseRegistroInspeccion = 'in_ct_clase_registro';
+  static const columnInFecInspeccionInspeccion = 'in_fec_inspeccion';
+  static const columnInAlcanceInspeccion = 'in_alcance';
+  static const columnInHabilitarDiasInhabilesInspeccion =
+      'in_habilitar_dias_inhabiles';
+  static const columnInHabilitarHorasInhabilesInspeccion =
+      'in_habilitar_horas_inhabiles';
+  static const columnInIncluyeNomsEspInspeccion = 'in_incluye_noms_esp';
+  static const columnInFecEmisionInspeccion = 'in_fec_emision';
+  static const columnInEsInspeccionEnCentroInspeccion =
+      'in_es_inspeccion_en_centro';
+  static const columnInDomicilioInspeccionInspeccion =
+      'in_domicilio_inspeccion';
+  static const columnInFirmanTitularesInspeccion = 'in_firman_titulares';
+  static const columnInNombreFirmanteInspeccion = 'in_nombre_firmante';
+  static const columnInCargoFirmanteInspeccion = 'in_cargo_firmante';
+  static const columnInGenerarCitatorioInspeccion = 'in_generar_citatorio';
+  static const columnInIncluirNotificadorInspeccion = 'in_incluir_notificador';
+  static const columnInEnDeclareInspeccion = 'in_en_declare';
+  static const columnInEnPasstInspeccion = 'in_en_passt';
+  static const columnInMedioInformacionInspeccion = 'in_medio_informacion';
+  static const columnInReqDocumentosInicioInspeccion =
+      'in_req_documentos_inicio';
+  static const columnInReqDocumentosTermino = 'in_req_documentos_termino';
+  static const columnInRspTipoEquipoInspeccion = 'in_rsp_tipo_equipo';
+  static const columnInRspEquipoInspeccion = 'in_rsp_equipo';
+  static const columnInRspNumControl = 'in_rsp_num_control';
+  static const columnInRspFecAutorizacionProvisionalInspeccion =
+      'in_rsp_fec_autorizacion_provisional';
+  static const columnInRspTipoAvisoInspeccion = 'in_rsp_tipo_aviso';
+  static const columnInRspFolioInspeccion = 'in_rsp_folio';
+  static const columnInRspPruebasInspeccion = 'in_rsp_pruebas';
+  static const columnInResultadoInspeccion = 'in_resultado';
+  static const columnInEtapaInspeccion = 'in_etapa';
+  static const columnInEstatusInspeccion = 'in_estatus';
+  static const columnSysUsrInsertInspeccion = 'sys_usr_insert';
+  static const columnSysFecInsertInspeccion = 'sys_fec_insert';
+  static const columnSysUsrUpdateInspeccion = 'sys_usr_update';
+  static const columnSysFecUpdateInspeccion = 'sys_fec_update';
+  static const columnInDomicilioInspeccion2Inspeccion =
+      'in_domicilio_inspeccion2';
+  static const columnInTipoProgramacionIdInspeccion = 'in_tipo_programacion_id';
+  static const columnInOtraMateriaMotivoInspeccion = 'in_otra_materia_motivo';
+  static const columnInOtraMateriaSubmateriaInspeccion =
+      'in_otra_materia_submateria';
+  static const columnInAplicaEspeciaInspeccion = 'in_aplica_especial';
+  static const columnMateriaGrupoIdInspeccion = 'materia_grupo_id';
+  static const columnInHrInspeccionInspeccion = 'in_hr_inspeccion';
+  static const columnInspeccionOrigenIdInspeccion = 'inspeccion_origen_id';
+  static const columnCveUrComisionInspeccion = 'cve_ur_comision';
+  static const columnNormativaVersionIdInspeccion = 'normativa_version_id';
+  static const columnInIdFirmanteInspeccion = 'in_id_firmante';
 
   // Instancia singleton
   DatabaseHelper._privateConstructor();
@@ -116,6 +190,14 @@ class DatabaseHelper {
       if (notificacionTableExists.isEmpty) {
         await _onCreateNotificacion(db, _databaseVersion);
       }
+
+      // Verifica si la tabla inspeccion existe
+      var inspeccionTableExists = await db.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='$tableInspeccion'");
+      // Si no existe, crea la tabla notificacion
+      if (inspeccionTableExists.isEmpty) {
+        await _onCreateInspeccion(db, _databaseVersion);
+      }
     });
   }
 
@@ -127,8 +209,10 @@ class DatabaseHelper {
     await _onCreatePersonas(db, version);
     // Crea la tabla paises
     await _onCreatePaises(db, version);
-
+    //crea la tabla notificacion
     await _onCreateNotificacion(db, version);
+    //crea la tabla inspeccion
+    await _onCreateInspeccion(db, version);
   }
 
   // Crea la tabla personas
@@ -221,6 +305,148 @@ class DatabaseHelper {
   ''');
   }
 
+  // Crea la tabla inspeccion
+  Future _onCreateInspeccion(Database db, int version) async {
+    await db.execute('''
+    CREATE TABLE $tableInspeccion (
+      $columnInspeccionIdInspeccion INTEGER PRIMARY KEY AUTOINCREMENT,
+      $columnInspectorIdInspeccion INTEGER,
+      $columnNotificadorIdInspeccion INTEGER,
+      $columnMesIdInspeccion INTEGER,
+      $columnMateriaIdInspeccion INTEGER,
+      $columnFundamentoDesignacionIdInspeccion INTEGER,
+      $columnMotivoInspeccionIdInspeccion INTEGER,
+      $columnSubtipoInspeccionIdInspeccion INTEGER,
+      $columnOperativoIdInspeccion INTEGER,
+      $columnCveUrInspeccion INTEGER,
+      $columnCveRamaInspeccion INTEGER,
+      $columnCentroTrabajoIdInspeccion INTEGER,
+      $columnInAnioInspeccion INTEGER,
+      $columnInNumExpedienteInspeccion TEXT,
+      $columnInOtraSubmateriaInspeccion TEXT,
+      $columnInCtRfcInspeccion TEXT,
+      $columnInCtRazonSocialInspeccion TEXT,
+      $columnInCtNombreInspeccion TEXT,
+      $columnInCtImssRegistroInspeccion TEXT,
+      $columnInCtClaseRegistroInspeccion TEXT,
+      $columnInFecInspeccionInspeccion TEXT,
+      $columnInAlcanceInspeccion INTEGER,
+      $columnInHabilitarDiasInhabilesInspeccion INTEGER,
+      $columnInHabilitarHorasInhabilesInspeccion INTEGER,
+      $columnInIncluyeNomsEspInspeccion INTEGER,
+      $columnInFecEmisionInspeccion TEXT,
+      $columnInEsInspeccionEnCentroInspeccion INTEGER,
+      $columnInDomicilioInspeccionInspeccion TEXT,
+      $columnInFirmanTitularesInspeccion INTEGER,
+      $columnInNombreFirmanteInspeccion TEXT,
+      $columnInCargoFirmanteInspeccion TEXT,
+      $columnInGenerarCitatorioInspeccion INTEGER,
+      $columnInIncluirNotificadorInspeccion INTEGER,
+      $columnInEnDeclareInspeccion INTEGER,
+      $columnInEnPasstInspeccion INTEGER,
+      $columnInMedioInformacionInspeccion TEXT,
+      $columnInReqDocumentosInicioInspeccion TEXT,
+      $columnInReqDocumentosTermino TEXT,
+      $columnInRspTipoEquipoInspeccion TEXT,
+      $columnInRspEquipoInspeccion TEXT,
+      $columnInRspNumControl TEXT,
+      $columnInRspFecAutorizacionProvisionalInspeccion TEXT,
+      $columnInRspTipoAvisoInspeccion TEXT,
+      $columnInRspFolioInspeccion TEXT,
+      $columnInRspPruebasInspeccion TEXT,
+      $columnInResultadoInspeccion INTEGER,
+      $columnInEtapaInspeccion INTEGER,
+      $columnInEstatusInspeccion INTEGER,
+      $columnSysUsrInsertInspeccion TEXT,
+      $columnSysFecInsertInspeccion TEXT,
+      $columnSysUsrUpdateInspeccion TEXT,
+      $columnSysFecUpdateInspeccion TEXT,
+      $columnInDomicilioInspeccion2Inspeccion TEXT,
+      $columnInTipoProgramacionIdInspeccion INTEGER,
+      $columnInOtraMateriaMotivoInspeccion TEXT,
+      $columnInOtraMateriaSubmateriaInspeccion INTEGER,
+      $columnInAplicaEspeciaInspeccion INTEGER,
+      $columnMateriaGrupoIdInspeccion INTEGER,
+      $columnInHrInspeccionInspeccion TEXT,
+      $columnInspeccionOrigenIdInspeccion INTEGER,
+      $columnCveUrComisionInspeccion INTEGER,
+      $columnNormativaVersionIdInspeccion INTEGER,
+      $columnInIdFirmanteInspeccion INTEGER
+    )
+  ''');
+
+    // Crea una lista de inspecciones fake
+    List<Map<String, dynamic>> inspecciones = [
+      {
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 1,
+        DatabaseHelper.columnInCtRazonSocialInspeccion: 'DULCERA MEXICANA',
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'BAHíA DE SANTA BáRBARA ESQ. CIRCUITO INTERIOR, ALVARO OBREGON, DISTRITO FEDERAL.',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-05-18 12:00:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '221/000108/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 1,
+        DatabaseHelper.columnMateriaIdInspeccion: 1,
+        DatabaseHelper.columnInAlcanceInspeccion: 1,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 1,
+      },
+      {
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 2,
+        DatabaseHelper.columnInCtRazonSocialInspeccion:
+            'AGENCIA AUTOCAMIONES LA JOYA',
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'CARRTERA INSTERNACIONAL No. 821 COL. EUCALIPTOS, ABEJONES, OAXACA.',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-01-28 19:00:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '021/000008/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 2,
+        DatabaseHelper.columnMateriaIdInspeccion: 2,
+        DatabaseHelper.columnInAlcanceInspeccion: 2,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 0,
+      },
+      {
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 3,
+        DatabaseHelper.columnInCtRazonSocialInspeccion:
+            'AUTOS MEXICANOS S.A. DE C.V.',
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'AVENIDA UNIVERSIDAD No. 733 COL. EXHACIENDA, ABEJONES, OAXACA.',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-04-20 10:30:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '221/000044/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 3,
+        DatabaseHelper.columnMateriaIdInspeccion: 3,
+        DatabaseHelper.columnInAlcanceInspeccion: 3,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 1,
+      },
+      {
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 4,
+        DatabaseHelper.columnInCtRazonSocialInspeccion: 'BIMBO, S.A. DE C.V.',
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'CERRO AZUL No. 231, Interior N/A, Colonia JARDINES DE SAN JOAQUIN, C.P. 59617, ZAMORA, MICHOACAN.',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-05-01 16:30:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '221/000074/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 4,
+        DatabaseHelper.columnMateriaIdInspeccion: 4,
+        DatabaseHelper.columnInAlcanceInspeccion: 4,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 0,
+      },
+      {
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 5,
+        DatabaseHelper.columnInCtRazonSocialInspeccion:
+            'LOGISTICA INTEGRAL DE LIMPIEZA DE LEON, S.A. DE C.V.',
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'MANUEL PRIEGO No. 3, Colonia RANCHO GRANDE, C.P. 36543, IRAPUATO, GUANAJUATO',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-05-18 11:00:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '221/000072/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 5,
+        DatabaseHelper.columnMateriaIdInspeccion: 5,
+        DatabaseHelper.columnInAlcanceInspeccion: 5,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 1,
+      }
+    ];
+
+    for (var inspeccion in inspecciones) {
+      await db.insert(tableInspeccion, inspeccion);
+    }
+  }
+
   /// ************************************************************
   ///                       CREDENCIALES
   /// ************************************************************
@@ -309,7 +535,17 @@ class DatabaseHelper {
   // Inserta un registro en la tabla notificacion
   Future<int?> insertNotificacion(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db?.insert(tableNotificacion, row);
+    var registro = await db?.insert(tableNotificacion, row);
+
+    return registro;
+  }
+
+  //actualiza un registro de la tabla notificacion
+  Future<int?> updateNotificacion(int id, Map<String, dynamic> row) async {
+    Database? db = await instance.database;
+    await db?.update(tableNotificacion, row,
+        where: '$columnNotificacionId = ?', whereArgs: [id]);
+    return id;
   }
 
   //Inserta un registro en la tabla de paises
@@ -340,5 +576,20 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryAllNotificaciones() async {
     Database? db = await instance.database;
     return await db!.query(tableNotificacion);
+  }
+
+  //Obtiene el listado de inspecciones de la tabla inspeccion
+  Future<List<Map<String, dynamic>>> queryAllInspecciones() async {
+    Database? db = await instance.database;
+    return await db!.query(tableInspeccion);
+  }
+
+  Future<List<Map<String, dynamic>>> queryInspeccion(int id) async {
+    Database? db = await instance.database;
+    return await db!.query(
+      tableInspeccion,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }
