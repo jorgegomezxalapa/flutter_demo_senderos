@@ -30,7 +30,7 @@ class DesktopPage extends ConsumerWidget {
                 const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 0),
             child: Text(
               textAlign: TextAlign.right,
-              "¡Bienvenido!\n$usuarioActivo",
+              "¡Bienvenidx!\n$usuarioActivo",
             ),
           ),
           IconButton(
