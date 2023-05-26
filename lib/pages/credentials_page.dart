@@ -6,9 +6,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //Paquete air_senderos
 import 'package:air_senderos/main.dart';
 import 'package:air_senderos/providers/properties.dart';
-import 'package:air_senderos/resources/styles.dart';
-import 'package:air_senderos/resources/general.dart';
+import 'package:air_senderos/resources/designs/styles.dart';
+import 'package:air_senderos/resources/scripts/general.dart';
 import 'package:air_senderos/pages/widgets/component_progress_indicator.dart';
+import 'package:air_senderos/database/handler/database_helper.dart';
 
 class CredentialsPage extends ConsumerWidget {
   const CredentialsPage({super.key});
@@ -16,6 +17,7 @@ class CredentialsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final properties = ref.watch(propertiesProvider) as Properties;
     var isOnline = properties.isOnline;
+    var isLoading = properties.isLoading;
     var version = properties.version;
     return Scaffold(
       appBar: AppBar(
@@ -77,75 +79,70 @@ class CredentialsPage extends ConsumerWidget {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    'Seleccione su credencial para ingresar',
+                    'Seleccione su credencial y capture su contraseña para ingresar',
                     style: subtitleText,
                   ),
                 ),
               ),
-              ListView(
-                shrinkWrap: true, // use this
-                padding: const EdgeInsets.all(20),
-                children: <Widget>[
-                  Card(
-                      child: InkWell(
-                          onTap: () {
-                            login(context);
-                          },
-                          child: const ListTile(
-                              title: Text("Martínez Flores, Esperanza"),
-                              subtitle: Text(
-                                  "Recolección de impresiones de la votación."),
-                              leading: Icon(
-                                Icons.person,
-                                size: 40,
+              FutureBuilder<List?>(
+                future: loadCredenciales(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Text('');
+                    default:
+                      if (snapshot.hasError) {
+                        return Text(
+                          'Error: ${snapshot.error}',
+                          style: subtitleText,
+                        );
+                      }
+                      List data = snapshot.data ?? [];
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(20),
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: InkWell(
+                              onTap: () {
+                                login(
+                                    context, ref, data[index]['user_core_id']);
+                              },
+                              child: ListTile(
+                                title: Text(data[index]['primer_apellido'] +
+                                    (data[index]['segundo_apellido'] != null
+                                        ? ' ' + data[index]['segundo_apellido']
+                                        : '') +
+                                    (data[index]['nombre'] != null
+                                        ? ', ' + data[index]['nombre']
+                                        : '')),
+                                subtitle: Text(data[index]['usuario']),
+                                leading: const Icon(
+                                  Icons.person,
+                                  size: 40,
+                                ),
+                                trailing: data[index]['activo'] == 1
+                                    ? const Icon(Icons.star)
+                                    : null,
                               ),
-                              trailing: Icon(Icons.star)))),
-                  Card(
-                      child: InkWell(
-                          onTap: () {
-                            login(context);
-                          },
-                          child: const ListTile(
-                              title: Text("Gutiérrez García, Guillermo"),
-                              subtitle: Text("Registro de incidencias."),
-                              leading: Icon(
-                                Icons.person,
-                                size: 40,
-                              ),
-                              trailing: Icon(Icons.star)))),
-                  Card(
-                      child: InkWell(
-                          onTap: () {
-                            login(context);
-                          },
-                          child: const ListTile(
-                            title: Text("Castro Castro, Guadalupe"),
-                            subtitle: Text("Incongruencias en las votaciones."),
-                            leading: Icon(
-                              Icons.person,
-                              size: 40,
                             ),
-                          ))),
-                  Card(
-                      child: InkWell(
-                          onTap: () {
-                            login(context);
-                          },
-                          child: const ListTile(
-                            title: Text("Jiménez Mejía, Marina"),
-                            subtitle: Text(
-                                "Confirmación de identidad de la empresa."),
-                            leading: Icon(
-                              Icons.person,
-                              size: 40,
-                            ),
-                          )))
-                ],
+                          );
+                        },
+                      );
+                  }
+                },
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<List<Map<String, dynamic>>> loadCredenciales() async {
+    //Abre conexión a la base de datos
+    var db = await DatabaseHelper.instance.database;
+    return await DatabaseHelper.instance.getCredenciales();
   }
 }

@@ -44,6 +44,8 @@ dependencies:
   sqflite: ^2.2.6
   sqflite_common_ffi: ^2.2.5
   open_file: ^3.3.1
+  flutter_svg: ^2.0.6
+  encrypt: ^5.0.1
 
 dev_dependencies:
   flutter_test:

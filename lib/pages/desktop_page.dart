@@ -5,8 +5,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //Paquete air_senderos
 import 'package:air_senderos/main.dart';
 import 'package:air_senderos/providers/properties.dart';
-import 'package:air_senderos/resources/styles.dart';
-import 'package:air_senderos/resources/general.dart';
+import 'package:air_senderos/resources/designs/styles.dart';
+import 'package:air_senderos/resources/scripts/general.dart';
 import 'package:air_senderos/pages/widgets/component_progress_indicator.dart';
 
 class DesktopPage extends ConsumerWidget {
@@ -15,13 +15,24 @@ class DesktopPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final properties = ref.watch(propertiesProvider) as Properties;
     var isOnline = properties.isOnline;
+    var isLoading = properties.isLoading;
     var version = properties.version;
+    var haveCredentials = properties.haveCredentials;
+    var usuarioActivo = properties.usuarioActivo;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(250, 35, 91, 78),
         title: Text(AppLocalizations.of(context).appBar(version)),
         actions: [
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 0),
+            child: Text(
+              textAlign: TextAlign.right,
+              "¡Bienvenido!\n$usuarioActivo",
+            ),
+          ),
           IconButton(
             icon: isOnline
                 ? const Icon(
@@ -34,21 +45,18 @@ class DesktopPage extends ConsumerWidget {
                   ),
             tooltip: 'Sincronizar',
             onPressed: () {
-              sincronize(context);
+              sincronize(context, ref);
             },
           ),
-          Visibility(
-            visible: isOnline,
-            child: IconButton(
-              icon: const Icon(
-                Icons.person_off,
-                size: 35,
-              ),
-              tooltip: 'Cerrar sesión',
-              onPressed: () {
-                logout(context);
-              },
+          IconButton(
+            icon: const Icon(
+              Icons.person_off,
+              size: 35,
             ),
+            tooltip: 'Cerrar sesión',
+            onPressed: () {
+              logout(context, ref, haveCredentials);
+            },
           ),
           IconButton(
             icon: const Icon(
@@ -80,7 +88,7 @@ class DesktopPage extends ConsumerWidget {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    'Inspecciones',
+                    'Mis inspecciones',
                     style: titleText,
                   ),
                 ),
@@ -91,7 +99,7 @@ class DesktopPage extends ConsumerWidget {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    'Seleccione un cuestionario para continuar',
+                    'Seleccione la inspección que desea trabajar',
                     style: subtitleText,
                   ),
                 ),
@@ -111,36 +119,29 @@ class DesktopPage extends ConsumerWidget {
                                       const Cuestionario1Page()),
                             );
                             */
+                            print("tapped 1");
                           },
                           child: const ListTile(
-                              title: Text("Cuestionario 1"),
-                              subtitle: Text(
-                                  "Recolección de impresiones de la votación."),
+                              title: Text("221/000108/2023"),
+                              subtitle: Text("18 mayo 2023 Hora: 12:00 p. m."),
                               leading: Text(
                                 '01',
                                 style: titleText,
                               ),
-                              trailing: Icon(Icons.star)))),
+                              trailing: Icon(Icons.done)))),
                   Card(
                       child: InkWell(
                           onTap: () {
-                            /*
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const Cuestionario2Page()),
-                            );
-                            */
+                            print("tapped 2");
                           },
                           child: const ListTile(
-                              title: Text("Cuestionario 2"),
-                              subtitle: Text("Registro de incidencias."),
+                              title: Text("221/000102/2023"),
+                              subtitle: Text("16 mayo 2023 Hora: 12:00 p. m."),
                               leading: Text(
                                 '02',
                                 style: titleText,
                               ),
-                              trailing: Icon(Icons.star)))),
+                              trailing: Icon(Icons.done)))),
                   Card(
                       child: InkWell(
                           onTap: () {
@@ -148,9 +149,8 @@ class DesktopPage extends ConsumerWidget {
                             print("tapped 3");
                           },
                           child: const ListTile(
-                              title: Text("Cuestionario 3"),
-                              subtitle:
-                                  Text("Incongruencias en las votaciones."),
+                              title: Text("221/000044/2023"),
+                              subtitle: Text("20 abril 2023 Hora: 12:00 p. m."),
                               leading: Text(
                                 '03',
                                 style: titleText,
@@ -162,9 +162,8 @@ class DesktopPage extends ConsumerWidget {
                             print("tapped 4");
                           },
                           child: const ListTile(
-                              title: Text("Cuestionario 4"),
-                              subtitle: Text(
-                                  "Confirmación de identidad de la empresa."),
+                              title: Text("221/000074/2023"),
+                              subtitle: Text("30 marzo 2023 Hora: 08:00 a. m."),
                               leading: Text(
                                 '04',
                                 style: titleText,

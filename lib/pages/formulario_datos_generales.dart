@@ -1,10 +1,9 @@
-import 'package:demo_senderos/database/handler/database_helper.dart';
-import 'package:demo_senderos/partials/cargar_documento_widget.dart';
-import 'package:demo_senderos/partials/my_app_bar.dart';
+import 'package:air_senderos/database/handler/database_helper.dart';
+import 'package:air_senderos/widgets/cargar_documento_widget.dart';
+import 'package:air_senderos/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class FormularioDatosGenerales extends StatefulWidget {
-
   String? titulo = 'Formulario Datos Generales';
   FormularioDatosGenerales({super.key});
 
@@ -14,11 +13,11 @@ class FormularioDatosGenerales extends StatefulWidget {
 }
 
 class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
-
   @override
   void initState() {
     super.initState();
   }
+
   final _formularioDatosGenerales = GlobalKey<FormState>();
   final _nombreRecibioController = TextEditingController();
   final _dijoSerController = TextEditingController();
@@ -54,7 +53,6 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +102,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 2, 0),
                                   child: Text(
                                     'Normatividad:',
                                     style: TextStyle(
@@ -113,7 +112,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(2, 0, 0, 0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(2, 0, 0, 0),
                                   child: Text(
                                     'Normatividad Pruebas QA',
                                     style: TextStyle(
@@ -170,7 +170,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Nombre o razón social',
@@ -187,7 +188,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Domicilio',
@@ -249,7 +251,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Fecha de inspección',
@@ -267,7 +270,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'No. de expediente',
@@ -284,7 +288,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Tipo de actuación',
@@ -310,7 +315,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Subtipo de actuación',
@@ -327,7 +333,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Tipo materia',
@@ -345,7 +352,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Alcance',
@@ -407,7 +415,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Se expidió citatorio',
@@ -424,7 +433,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Recibió la empresa*',
@@ -532,12 +542,14 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                         ),
                                         Container(
                                           child: FormField<String>(
-                                            builder: (FormFieldState<String> state) {
+                                            builder:
+                                                (FormFieldState<String> state) {
                                               return DropdownButton(
                                                 value: _selectedOptionMotivo,
                                                 onChanged: (String? newValue) {
                                                   setState(() {
-                                                    _selectedOptionMotivo = newValue!;
+                                                    _selectedOptionMotivo =
+                                                        newValue!;
                                                   });
                                                   state.didChange(newValue);
                                                 },
@@ -547,16 +559,18 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                                   'Motivo dos',
                                                   'Motivo tres'
                                                 ].map<DropdownMenuItem<String>>(
-                                                        (String value) {
-                                                      return DropdownMenuItem<String>(
-                                                        value: value,
-                                                        child: Text(value),
-                                                      );
-                                                    }).toList(),
+                                                    (String value) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: value,
+                                                    child: Text(value),
+                                                  );
+                                                }).toList(),
                                               );
                                             },
                                             validator: (value) {
-                                              if (value == null || value == '--Seleccionar--') {
+                                              if (value == null ||
+                                                  value == '--Seleccionar--') {
                                                 return 'Por favor selecciona una opción';
                                               }
                                               return null;
@@ -584,7 +598,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 Expanded(
                                   flex: 1,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Forma de constatación de razón social y domicilio',
@@ -598,7 +613,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                         value: _selectedOptionFormaConstatacion,
                                         onChanged: (String? newValue) {
                                           setState(() {
-                                            _selectedOptionFormaConstatacion = newValue!;
+                                            _selectedOptionFormaConstatacion =
+                                                newValue!;
                                           });
                                         },
                                         items: <String>[
@@ -639,17 +655,20 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
-                                              key: const Key('_nombreRecibioController'),
-                                              controller: _nombreRecibioController,
+                                              key: const Key(
+                                                  '_nombreRecibioController'),
+                                              controller:
+                                                  _nombreRecibioController,
                                               decoration: const InputDecoration(
                                                 border: OutlineInputBorder(),
                                               ),
-                                                validator: (value) {
-                                                  if (value == null || value.isEmpty) {
-                                                    return 'Por favor ingrese un valor';
-                                                  }
-                                                  return null;
-                                                },
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Por favor ingrese un valor';
+                                                }
+                                                return null;
+                                              },
                                             ),
                                           ),
                                         ),
@@ -679,10 +698,12 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
-                                              key: const Key('_dijoSerController'),
+                                              key: const Key(
+                                                  '_dijoSerController'),
                                               controller: _dijoSerController,
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Por favor ingrese un valor';
                                                 }
                                                 return null;
@@ -715,12 +736,12 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                         ),
                                         Column(
                                           children: [
-                                            (_selectedDate != null && _selectedTime != null) 
-                                                ?
-                                                Text('Selected: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year} ${_selectedTime.hour}:${_selectedTime.minute}')
-                                                :
-                                            const Text(
-                                                'Fecha y hora de entrega*'),
+                                            (_selectedDate != null &&
+                                                    _selectedTime != null)
+                                                ? Text(
+                                                    'Selected: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year} ${_selectedTime.hour}:${_selectedTime.minute}')
+                                                : const Text(
+                                                    'Fecha y hora de entrega*'),
                                             Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: <Widget>[
@@ -790,7 +811,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Padding(
-                                              padding: const EdgeInsets.all(5.0),
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
                                               child: ElevatedButton(
                                                 onPressed: () =>
                                                     _selectDate(context),
@@ -798,7 +820,8 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(5.0),
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
                                               child: ElevatedButton(
                                                 onPressed: () =>
                                                     _selectTime(context),
@@ -858,17 +881,23 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                           IntrinsicHeight(
                             child: Row(
                               children: const [
-                                 Expanded(
+                                Expanded(
                                   flex: 1,
-                                  child:  CargarDocumentoWidget(titleText: 'Orden de inspección',),
+                                  child: CargarDocumentoWidget(
+                                    titleText: 'Orden de inspección',
+                                  ),
                                 ),
-                                 Expanded(
+                                Expanded(
                                   flex: 1,
-                                  child:  CargarDocumentoWidget(titleText: 'Citatorio',),
+                                  child: CargarDocumentoWidget(
+                                    titleText: 'Citatorio',
+                                  ),
                                 ),
-                                 Expanded(
+                                Expanded(
                                   flex: 1,
-                                  child: CargarDocumentoWidget(titleText: 'Listado anexo de documentos',),
+                                  child: CargarDocumentoWidget(
+                                    titleText: 'Listado anexo de documentos',
+                                  ),
                                 ),
                               ],
                             ),
@@ -881,13 +910,18 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                               children: const [
                                 Expanded(
                                   flex: 1,
-                                  child: CargarDocumentoWidget(titleText: 'Guía de derechos y obligaciones',),
+                                  child: CargarDocumentoWidget(
+                                    titleText:
+                                        'Guía de derechos y obligaciones',
+                                  ),
                                 ),
                                 Expanded(
                                   flex: 1,
-                                  child: CargarDocumentoWidget(titleText: 'Doc_ARCR_Programación',),
+                                  child: CargarDocumentoWidget(
+                                    titleText: 'Doc_ARCR_Programación',
+                                  ),
                                 ),
-                                 Expanded(
+                                Expanded(
                                   flex: 1,
                                   child: SizedBox(),
                                 ),
@@ -997,7 +1031,6 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                             ),
                           ),
                           ElevatedButton(
-
                             onPressed: () async {
                               final snackBar = SnackBar(
                                 content: const Text('Formulario guardado'),
@@ -1009,32 +1042,55 @@ class FormularioDatosGeneralesState extends State<FormularioDatosGenerales> {
                                 ),
                               );
 
-                              if (_formularioDatosGenerales.currentState != null && _formularioDatosGenerales.currentState!.validate()) {
+                              if (_formularioDatosGenerales.currentState !=
+                                      null &&
+                                  _formularioDatosGenerales.currentState!
+                                      .validate()) {
                                 // Guardar el valor en la base de datos
                                 final recibio_empresa = _radioRecibioEmpresa;
                                 final quedo_pegado = _radioSeDejoPegado;
-                                final nombre_recibio = _nombreRecibioController.text;
+                                final nombre_recibio =
+                                    _nombreRecibioController.text;
                                 final dijo_ser = _dijoSerController.text;
-                                final forma_constatacion = _selectedOptionFormaConstatacion;
+                                final forma_constatacion =
+                                    _selectedOptionFormaConstatacion;
                                 final motivo = _selectedOptionMotivo;
-                                final fec_entrega = '${_selectedDate.toLocal().toString().split(' ')[0]} ${_selectedTime.hour}:${_selectedTime.minute}';
+                                final fec_entrega =
+                                    '${_selectedDate.toLocal().toString().split(' ')[0]} ${_selectedTime.hour}:${_selectedTime.minute}';
                                 final tipo_documento = radioDocumentoPorGenerar;
 
                                 var db = await DatabaseHelper.instance.database;
 
                                 // Inserta un registro en la tabla personas
-                                int? id = await DatabaseHelper.instance.insertNotificacion({
-                                  DatabaseHelper.columnNotifSeRecibioNotificacion: recibio_empresa,
-                                  DatabaseHelper.columnNotifQuedoPegadoNotificacion: quedo_pegado,
-                                  DatabaseHelper.columnNotifNombreRecibioNotificacion: nombre_recibio,
-                                  DatabaseHelper.columnNotifDijoSerNotificacion: dijo_ser,
-                                  DatabaseHelper.columnNotifFormaConstatacionIdNotificacion: forma_constatacion,
-                                  DatabaseHelper.columnNotifOtroMotivoNotificacion: motivo,
-                                  DatabaseHelper.columnNotifFecEntregaNotificacion: fec_entrega,
-                                  DatabaseHelper.columnTipoDocumentoIdNotificacion: tipo_documento,
+                                int? id = await DatabaseHelper.instance
+                                    .insertNotificacion({
+                                  DatabaseHelper
+                                          .columnNotifSeRecibioNotificacion:
+                                      recibio_empresa,
+                                  DatabaseHelper
+                                          .columnNotifQuedoPegadoNotificacion:
+                                      quedo_pegado,
+                                  DatabaseHelper
+                                          .columnNotifNombreRecibioNotificacion:
+                                      nombre_recibio,
+                                  DatabaseHelper.columnNotifDijoSerNotificacion:
+                                      dijo_ser,
+                                  DatabaseHelper
+                                          .columnNotifFormaConstatacionIdNotificacion:
+                                      forma_constatacion,
+                                  DatabaseHelper
+                                          .columnNotifOtroMotivoNotificacion:
+                                      motivo,
+                                  DatabaseHelper
+                                          .columnNotifFecEntregaNotificacion:
+                                      fec_entrega,
+                                  DatabaseHelper
+                                          .columnTipoDocumentoIdNotificacion:
+                                      tipo_documento,
                                 });
 
-                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
                               }
                             },
                             style: ElevatedButton.styleFrom(

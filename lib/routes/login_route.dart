@@ -6,24 +6,48 @@ import 'package:air_senderos/pages/credentials_page.dart';
 
 void routeLogin(context) {
   // Cerramos la page actual
-  Navigator.pop(context);
+  //Navigator.pop(context);
   // Cargamos la nueva page
-  Navigator.of(context)
-      .push(MaterialPageRoute(builder: (context) => const LoginPage()));
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => LoginPage(),
+    ),
+  );
 }
 
 void routeCredentials(context) {
   // Cerramos la page actual
-  Navigator.pop(context);
+  //Navigator.pop(context);
   // Cargamos la nueva page
-  Navigator.of(context)
-      .push(MaterialPageRoute(builder: (context) => const CredentialsPage()));
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CredentialsPage(),
+    ),
+  );
+}
+
+void routereplaceCredentials(context) {
+  // Cerramos la page actual
+  //Navigator.pop(context);
+  // Cargamos la nueva page
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CredentialsPage(),
+    ),
+  );
 }
 
 void routeDesktop(context) {
   // Cerramos la page actual
-  Navigator.pop(context);
+  //Navigator.pop(context);
   // Cargamos la nueva page
-  Navigator.of(context)
-      .push(MaterialPageRoute(builder: (context) => const DesktopPage()));
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => DesktopPage(),
+    ),
+  );
 }

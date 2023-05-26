@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:air_senderos/resources/colors.dart';
+import 'package:air_senderos/resources/designs/colors.dart';
 
 final ButtonStyle mainFlatButtonStyle = TextButton.styleFrom(
   // ignore: deprecated_member_use
