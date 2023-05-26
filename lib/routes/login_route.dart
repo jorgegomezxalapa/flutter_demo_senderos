@@ -1,7 +1,7 @@
+import 'package:air_senderos/pages/inspecciones.dart';
 import 'package:flutter/material.dart';
 //Paquete air_senderos
 import 'package:air_senderos/pages/login_page.dart';
-import 'package:air_senderos/pages/desktop_page.dart';
 import 'package:air_senderos/pages/credentials_page.dart';
 
 void routeLogin(context) {
@@ -47,7 +47,7 @@ void routeDesktop(context) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => DesktopPage(),
+      builder: (context) => ModuloInspeccion(),
     ),
   );
 }
