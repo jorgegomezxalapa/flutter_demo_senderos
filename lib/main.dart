@@ -1,5 +1,4 @@
 import 'dart:io' show Platform;
-import 'package:air_senderos/pages/inspecciones.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -8,14 +7,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
 //Paquete air_senderos
-import 'package:air_senderos/services/api_paises.dart';
-import 'package:air_senderos/pages/modulo_persona.dart';
-import 'package:air_senderos/resources/colors.dart';
+import 'package:air_senderos/resources/designs/colors.dart';
 import 'package:air_senderos/providers/properties.dart';
+import 'package:air_senderos/pages/none_page.dart';
 import 'package:air_senderos/pages/login_page.dart';
 import 'package:air_senderos/pages/desktop_page.dart';
 import 'package:air_senderos/pages/credentials_page.dart';
-import 'dart:developer';
+import 'package:air_senderos/database/handler/database_helper.dart';
 
 final propertiesProvider = StateNotifierProvider(
   (ref) => PropertiesNotifier(
@@ -23,11 +21,12 @@ final propertiesProvider = StateNotifierProvider(
         version: '0.1',
         isOnline: false,
         isLoading: false,
-        isAutorized: true,
-        haveCredentials: true),
+        isAutorized: false,
+        haveCredentials: false,
+        checkCredentials: false,
+        usuarioActivo: ""),
   ),
 );
-
 Future main() async {
   if (Platform.isWindows) {
     // Initialize FFI
@@ -38,7 +37,7 @@ Future main() async {
   runApp(
     ProviderScope(
       child: MaterialApp(
-        title: 'Flutter App',
+        title: 'AIR App',
         localizationsDelegates: const [
           AppLocalizations.delegate, // Add this line
           GlobalMaterialLocalizations.delegate,
@@ -68,16 +67,6 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  void _routeFormularioPersona() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => ModuloPersona()));
-  }
-
-  void _routeApiPaises() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => ApiPaises()));
-  }
-
   @override
   void initState() {
     super.initState();
@@ -85,6 +74,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       _checkConnection();
     });
+    _checkCredenciales(ref);
   }
 
   void _checkConnection() async {
@@ -97,14 +87,19 @@ class _MyAppState extends ConsumerState<MyApp> {
     } else {
       ref.read(propertiesProvider.notifier).setIsOnline(false);
     }
-    /**********************************************************************************/
-    /******************************     SOLO PRUEBAS     ******************************/
-    /**********************************************************************************/
-    final properties = ref.watch(propertiesProvider) as Properties;
-    log("Properties is: $properties");
-    var isOnline = properties.isOnline;
-    log("isOnline is: $isOnline");
-    /**********************************************************************************/
+  }
+
+  void _checkCredenciales(WidgetRef ref) async {
+    // Abre conexión a la base de datos
+    var db = await DatabaseHelper.instance.database;
+    // Desactiva las credenciales
+    List<Map<String, Object?>>? registros =
+        await DatabaseHelper.instance.getCredenciales();
+    if (registros.isNotEmpty) {
+      // Deshabilita la variable de control isAutorized
+      ref.read(propertiesProvider.notifier).setHaveCredentials(true);
+    }
+    ref.read(propertiesProvider.notifier).setCheckCredentials(true);
   }
 
   @override
@@ -113,9 +108,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     var isOnline = properties.isOnline;
     var isAutorized = properties.isAutorized;
     var haveCredentials = properties.haveCredentials;
-    return ModuloInspeccion();
+    var checkCredentials = properties.checkCredentials;
     return isAutorized
-        ? (haveCredentials ? const CredentialsPage() : const LoginPage())
-        : const DesktopPage();
+        ? DesktopPage()
+        : checkCredentials
+            ? (haveCredentials ? CredentialsPage() : LoginPage())
+            : NonePage();
   }
 }
