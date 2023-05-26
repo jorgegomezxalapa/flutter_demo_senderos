@@ -1,11 +1,26 @@
 import 'package:sqflite/sqflite.dart';
+//Paquete air_senderos
+import 'package:air_senderos/database/models/credencial.dart';
+import 'dart:convert';
 
 class DatabaseHelper {
   //db
   static const _databaseName = "my_database.db";
   static const _databaseVersion = 1;
+
+  //tabla credenciales
+  static const tableCredenciales = 'credenciales';
+  static const columnCredencialId = 'id';
+  static const columnCredencialUserCoreId = 'user_core_id';
+  static const columnCredencialActivo = 'activo';
+  static const columnCredencialNombre = 'nombre';
+  static const columnCredencialPrimerApellido = 'primer_apellido';
+  static const columnCredencialSegundoApellido = 'segundo_apellido';
+  static const columnCredencialUsuario = 'usuario';
+  static const columnCredencialPassword = 'password';
+  static const columnCredencialToken = 'token';
   //tabla personas
-  static const table = 'personas';
+  static const tablePersonas = 'personas';
   static const columnId = 'id';
   static const columnNombre = 'nombre';
   static const columnPrimerApellido = 'primer_apellido';
@@ -22,17 +37,24 @@ class DatabaseHelper {
   static const columnTipoDocumentoIdNotificacion = 'tipo_documento_id';
   static const columnInspectorIdNotificacion = 'inspector_id';
   static const columnInspeccionIdNotificacion = 'inspeccion_id';
-  static const columnNotifMotivoNoEntregaIdNotificacion = 'notif_motivo_no_entrega_id';
-  static const columnNotifFormaConstatacionIdNotificacion = 'notif_forma_constatacion_id';
-  static const columnNotifEstatusAsignacionNotificacion = 'notif_estatus_asignacion';
+  static const columnNotifMotivoNoEntregaIdNotificacion =
+      'notif_motivo_no_entrega_id';
+  static const columnNotifFormaConstatacionIdNotificacion =
+      'notif_forma_constatacion_id';
+  static const columnNotifEstatusAsignacionNotificacion =
+      'notif_estatus_asignacion';
   static const columnNotifFormaEntregaNotificacion = 'notif_forma_entrega';
   static const columnNotifFormaEnvioNotificacion = 'notif_forma_envio';
-  static const columnNotifFecLimiteEntregaNotificacion = 'notif_fec_limite_entrega';
-  static const columnNotifHoraLimiteRecepcionNotificacion = 'notif_hora_limite_recepcion';
-  static const columnNotifNotificacionPersonalNotificacion = 'notif_notificacion_personal';
+  static const columnNotifFecLimiteEntregaNotificacion =
+      'notif_fec_limite_entrega';
+  static const columnNotifHoraLimiteRecepcionNotificacion =
+      'notif_hora_limite_recepcion';
+  static const columnNotifNotificacionPersonalNotificacion =
+      'notif_notificacion_personal';
   static const columnNotifFecEnvioNotificacion = 'notif_fec_envio';
   static const columnNotifNumGuiaNotificacion = 'notif_num_guia';
-  static const columnNotifFecEntregaProgramadaNotificacion = 'notif_fec_entrega_programada';
+  static const columnNotifFecEntregaProgramadaNotificacion =
+      'notif_fec_entrega_programada';
   static const columnNotifEstatusEntregaNotificacion = 'notif_estatus_entrega';
   static const columnNotifSeRecibioNotificacion = 'notif_se_recibio';
   static const columnNotifQuedoPegadoNotificacion = 'notif_quedo_pegado';
@@ -45,7 +67,6 @@ class DatabaseHelper {
   static const columnSysFecInserNotificacion = 'sys_fec_insert';
   static const columnSysUsrUpdateNotificacion = 'sys_usr_update';
   static const columnSysFecUpdateNotificacion = 'sys_fec_update';
-
   //tabla inspeccion
   static const tableInspeccion = 'inspeccion';
   static const columnInspeccionIdInspeccion = 'inspeccion_id';
@@ -53,7 +74,8 @@ class DatabaseHelper {
   static const columnNotificadorIdInspeccion = 'notificador_id';
   static const columnMesIdInspeccion = 'mes_id';
   static const columnMateriaIdInspeccion = 'materia_id';
-  static const columnFundamentoDesignacionIdInspeccion = 'fundamento_designacion_id';
+  static const columnFundamentoDesignacionIdInspeccion =
+      'fundamento_designacion_id';
   static const columnMotivoInspeccionIdInspeccion = 'motivo_inspeccion_id';
   static const columnSubtipoInspeccionIdInspeccion = 'subtipo_inspeccion_id';
   static const columnOperativoIdInspeccion = 'operativo_id';
@@ -70,12 +92,16 @@ class DatabaseHelper {
   static const columnInCtClaseRegistroInspeccion = 'in_ct_clase_registro';
   static const columnInFecInspeccionInspeccion = 'in_fec_inspeccion';
   static const columnInAlcanceInspeccion = 'in_alcance';
-  static const columnInHabilitarDiasInhabilesInspeccion = 'in_habilitar_dias_inhabiles';
-  static const columnInHabilitarHorasInhabilesInspeccion = 'in_habilitar_horas_inhabiles';
+  static const columnInHabilitarDiasInhabilesInspeccion =
+      'in_habilitar_dias_inhabiles';
+  static const columnInHabilitarHorasInhabilesInspeccion =
+      'in_habilitar_horas_inhabiles';
   static const columnInIncluyeNomsEspInspeccion = 'in_incluye_noms_esp';
   static const columnInFecEmisionInspeccion = 'in_fec_emision';
-  static const columnInEsInspeccionEnCentroInspeccion = 'in_es_inspeccion_en_centro';
-  static const columnInDomicilioInspeccionInspeccion = 'in_domicilio_inspeccion';
+  static const columnInEsInspeccionEnCentroInspeccion =
+      'in_es_inspeccion_en_centro';
+  static const columnInDomicilioInspeccionInspeccion =
+      'in_domicilio_inspeccion';
   static const columnInFirmanTitularesInspeccion = 'in_firman_titulares';
   static const columnInNombreFirmanteInspeccion = 'in_nombre_firmante';
   static const columnInCargoFirmanteInspeccion = 'in_cargo_firmante';
@@ -84,12 +110,14 @@ class DatabaseHelper {
   static const columnInEnDeclareInspeccion = 'in_en_declare';
   static const columnInEnPasstInspeccion = 'in_en_passt';
   static const columnInMedioInformacionInspeccion = 'in_medio_informacion';
-  static const columnInReqDocumentosInicioInspeccion = 'in_req_documentos_inicio';
+  static const columnInReqDocumentosInicioInspeccion =
+      'in_req_documentos_inicio';
   static const columnInReqDocumentosTermino = 'in_req_documentos_termino';
   static const columnInRspTipoEquipoInspeccion = 'in_rsp_tipo_equipo';
   static const columnInRspEquipoInspeccion = 'in_rsp_equipo';
   static const columnInRspNumControl = 'in_rsp_num_control';
-  static const columnInRspFecAutorizacionProvisionalInspeccion = 'in_rsp_fec_autorizacion_provisional';
+  static const columnInRspFecAutorizacionProvisionalInspeccion =
+      'in_rsp_fec_autorizacion_provisional';
   static const columnInRspTipoAvisoInspeccion = 'in_rsp_tipo_aviso';
   static const columnInRspFolioInspeccion = 'in_rsp_folio';
   static const columnInRspPruebasInspeccion = 'in_rsp_pruebas';
@@ -100,10 +128,12 @@ class DatabaseHelper {
   static const columnSysFecInsertInspeccion = 'sys_fec_insert';
   static const columnSysUsrUpdateInspeccion = 'sys_usr_update';
   static const columnSysFecUpdateInspeccion = 'sys_fec_update';
-  static const columnInDomicilioInspeccion2Inspeccion = 'in_domicilio_inspeccion2';
+  static const columnInDomicilioInspeccion2Inspeccion =
+      'in_domicilio_inspeccion2';
   static const columnInTipoProgramacionIdInspeccion = 'in_tipo_programacion_id';
   static const columnInOtraMateriaMotivoInspeccion = 'in_otra_materia_motivo';
-  static const columnInOtraMateriaSubmateriaInspeccion = 'in_otra_materia_submateria';
+  static const columnInOtraMateriaSubmateriaInspeccion =
+      'in_otra_materia_submateria';
   static const columnInAplicaEspeciaInspeccion = 'in_aplica_especial';
   static const columnMateriaGrupoIdInspeccion = 'materia_grupo_id';
   static const columnInHrInspeccionInspeccion = 'in_hr_inspeccion';
@@ -111,7 +141,6 @@ class DatabaseHelper {
   static const columnCveUrComisionInspeccion = 'cve_ur_comision';
   static const columnNormativaVersionIdInspeccion = 'normativa_version_id';
   static const columnInIdFirmanteInspeccion = 'in_id_firmante';
-
 
   // Instancia singleton
   DatabaseHelper._privateConstructor();
@@ -130,46 +159,52 @@ class DatabaseHelper {
     var databasesPath = await getDatabasesPath();
     String path = '$databasesPath/$_databaseName';
     return await openDatabase(path,
-        version: _databaseVersion,
-        onCreate: _onCreate,
-        onOpen: (db) async {
+        version: _databaseVersion, onCreate: _onCreate, onOpen: (db) async {
+      // Verifica si la tabla credenciales existe
+      var credencialesTableExists = await db.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='$tableCredenciales'");
+      // Si no existe, crea la tabla credenciales
+      if (credencialesTableExists.isEmpty) {
+        await _onCreateCredenciales(db, _databaseVersion);
+      }
 
-          // Verifica si la tabla personas existe
-          var personasTableExists = await db.rawQuery(
-              "SELECT name FROM sqlite_master WHERE type='table' AND name='$table'");
-          // Si no existe, crea la tabla personas
-          if (personasTableExists.isEmpty) {
+      // Verifica si la tabla personas existe
+      var personasTableExists = await db.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='$tablePersonas'");
+      // Si no existe, crea la tabla personas
+      if (personasTableExists.isEmpty) {
+        await _onCreatePersonas(db, _databaseVersion);
+      }
+      // Verifica si la tabla paises existe
+      var paisesTableExists = await db.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='$tablePaises'");
+      // Si no existe, crea la tabla paises
+      if (paisesTableExists.isEmpty) {
+        await _onCreatePaises(db, _databaseVersion);
+      }
 
-            await _onCreatePersonas(db, _databaseVersion);
-          }
-          // Verifica si la tabla paises existe
-          var paisesTableExists = await db.rawQuery(
-              "SELECT name FROM sqlite_master WHERE type='table' AND name='$tablePaises'");
-          // Si no existe, crea la tabla paises
-          if (paisesTableExists.isEmpty) {
-            await _onCreatePaises(db, _databaseVersion);
-          }
+      // Verifica si la tabla notificacion existe
+      var notificacionTableExists = await db.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='$tableNotificacion'");
+      // Si no existe, crea la tabla notificacion
+      if (notificacionTableExists.isEmpty) {
+        await _onCreateNotificacion(db, _databaseVersion);
+      }
 
-          // Verifica si la tabla notificacion existe
-          var notificacionTableExists = await db.rawQuery(
-              "SELECT name FROM sqlite_master WHERE type='table' AND name='$tableNotificacion'");
-          // Si no existe, crea la tabla notificacion
-          if (notificacionTableExists.isEmpty) {
-            await _onCreateNotificacion(db, _databaseVersion);
-          }
-
-          // Verifica si la tabla inspeccion existe
-          var inspeccionTableExists = await db.rawQuery(
-              "SELECT name FROM sqlite_master WHERE type='table' AND name='$tableInspeccion'");
-          // Si no existe, crea la tabla notificacion
-          if (inspeccionTableExists.isEmpty) {
-            await _onCreateInspeccion(db, _databaseVersion);
-          }
-        });
+      // Verifica si la tabla inspeccion existe
+      var inspeccionTableExists = await db.rawQuery(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='$tableInspeccion'");
+      // Si no existe, crea la tabla notificacion
+      if (inspeccionTableExists.isEmpty) {
+        await _onCreateInspeccion(db, _databaseVersion);
+      }
+    });
   }
 
-  // Crea las tablas
+  // Crea la tabla personas y la tabla paises
   Future _onCreate(Database db, int version) async {
+    // Crea la tabla credenciales
+    await _onCreateCredenciales(db, version);
     // Crea la tabla personas
     await _onCreatePersonas(db, version);
     // Crea la tabla paises
@@ -180,9 +215,25 @@ class DatabaseHelper {
     await _onCreateInspeccion(db, version);
   }
 
+  // Crea la tabla personas
+  Future _onCreateCredenciales(Database db, int version) async {
+    await db.execute('''
+    CREATE TABLE $tableCredenciales (
+      $columnCredencialId INTEGER PRIMARY KEY AUTOINCREMENT,
+      $columnCredencialUserCoreId INTEGER NOT NULL,
+      $columnCredencialActivo INTEGER NOT NULL,
+      $columnCredencialNombre TEXT NOT NULL,
+      $columnCredencialPrimerApellido TEXT NOT NULL,
+      $columnCredencialSegundoApellido TEXT NOT NULL,
+      $columnCredencialUsuario TEXT NOT NULL,
+      $columnCredencialPassword TEXT NOT NULL,
+      $columnCredencialToken TEXT NOT NULL
+    )
+  ''');
+  }
+
   // Crea la tabla paises y luego inserta los registros iniciales
   Future _onCreatePaises(Database db, int version) async {
-
     // Crea la tabla paises
     await db.execute('''
     CREATE TABLE $tablePaises (
@@ -207,9 +258,8 @@ class DatabaseHelper {
 
   // Crea la tabla personas
   Future _onCreatePersonas(Database db, int version) async {
-
     await db.execute('''
-    CREATE TABLE $table (
+    CREATE TABLE $tablePersonas (
       $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
       $columnNombre TEXT NOT NULL,
       $columnPrimerApellido TEXT NOT NULL,
@@ -328,72 +378,158 @@ class DatabaseHelper {
     // Crea una lista de inspecciones fake
     List<Map<String, dynamic>> inspecciones = [
       {
-        DatabaseHelper.columnNormativaVersionIdInspeccion : 1,
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 1,
         DatabaseHelper.columnInCtRazonSocialInspeccion: 'DULCERA MEXICANA',
-        DatabaseHelper.columnInDomicilioInspeccionInspeccion: 'BAHíA DE SANTA BáRBARA ESQ. CIRCUITO INTERIOR, ALVARO OBREGON, DISTRITO FEDERAL.',
-        DatabaseHelper.columnInFecInspeccionInspeccion : '2023-05-18 12:00:00',
-        DatabaseHelper.columnInNumExpedienteInspeccion : '221/000108/2023',
-        DatabaseHelper.columnSubtipoInspeccionIdInspeccion : 1,
-        DatabaseHelper.columnMateriaIdInspeccion : 1,
-        DatabaseHelper.columnInAlcanceInspeccion : 1,
-        DatabaseHelper.columnInGenerarCitatorioInspeccion : 1,
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'BAHíA DE SANTA BáRBARA ESQ. CIRCUITO INTERIOR, ALVARO OBREGON, DISTRITO FEDERAL.',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-05-18 12:00:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '221/000108/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 1,
+        DatabaseHelper.columnMateriaIdInspeccion: 1,
+        DatabaseHelper.columnInAlcanceInspeccion: 1,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 1,
       },
       {
-        DatabaseHelper.columnNormativaVersionIdInspeccion : 2,
-        DatabaseHelper.columnInCtRazonSocialInspeccion: 'AGENCIA AUTOCAMIONES LA JOYA',
-        DatabaseHelper.columnInDomicilioInspeccionInspeccion: 'CARRTERA INSTERNACIONAL No. 821 COL. EUCALIPTOS, ABEJONES, OAXACA.',
-        DatabaseHelper.columnInFecInspeccionInspeccion : '2023-01-28 19:00:00',
-        DatabaseHelper.columnInNumExpedienteInspeccion : '021/000008/2023',
-        DatabaseHelper.columnSubtipoInspeccionIdInspeccion : 2,
-        DatabaseHelper.columnMateriaIdInspeccion : 2,
-        DatabaseHelper.columnInAlcanceInspeccion : 2,
-        DatabaseHelper.columnInGenerarCitatorioInspeccion : 0,
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 2,
+        DatabaseHelper.columnInCtRazonSocialInspeccion:
+            'AGENCIA AUTOCAMIONES LA JOYA',
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'CARRTERA INSTERNACIONAL No. 821 COL. EUCALIPTOS, ABEJONES, OAXACA.',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-01-28 19:00:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '021/000008/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 2,
+        DatabaseHelper.columnMateriaIdInspeccion: 2,
+        DatabaseHelper.columnInAlcanceInspeccion: 2,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 0,
       },
       {
-        DatabaseHelper.columnNormativaVersionIdInspeccion : 3,
-        DatabaseHelper.columnInCtRazonSocialInspeccion: 'AUTOS MEXICANOS S.A. DE C.V.',
-        DatabaseHelper.columnInDomicilioInspeccionInspeccion: 'AVENIDA UNIVERSIDAD No. 733 COL. EXHACIENDA, ABEJONES, OAXACA.',
-        DatabaseHelper.columnInFecInspeccionInspeccion : '2023-04-20 10:30:00',
-        DatabaseHelper.columnInNumExpedienteInspeccion : '221/000044/2023',
-        DatabaseHelper.columnSubtipoInspeccionIdInspeccion : 3,
-        DatabaseHelper.columnMateriaIdInspeccion : 3,
-        DatabaseHelper.columnInAlcanceInspeccion :3,
-        DatabaseHelper.columnInGenerarCitatorioInspeccion : 1,
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 3,
+        DatabaseHelper.columnInCtRazonSocialInspeccion:
+            'AUTOS MEXICANOS S.A. DE C.V.',
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'AVENIDA UNIVERSIDAD No. 733 COL. EXHACIENDA, ABEJONES, OAXACA.',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-04-20 10:30:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '221/000044/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 3,
+        DatabaseHelper.columnMateriaIdInspeccion: 3,
+        DatabaseHelper.columnInAlcanceInspeccion: 3,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 1,
       },
       {
-        DatabaseHelper.columnNormativaVersionIdInspeccion : 4,
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 4,
         DatabaseHelper.columnInCtRazonSocialInspeccion: 'BIMBO, S.A. DE C.V.',
-        DatabaseHelper.columnInDomicilioInspeccionInspeccion: 'CERRO AZUL No. 231, Interior N/A, Colonia JARDINES DE SAN JOAQUIN, C.P. 59617, ZAMORA, MICHOACAN.',
-        DatabaseHelper.columnInFecInspeccionInspeccion : '2023-05-01 16:30:00',
-        DatabaseHelper.columnInNumExpedienteInspeccion : '221/000074/2023',
-        DatabaseHelper.columnSubtipoInspeccionIdInspeccion : 4,
-        DatabaseHelper.columnMateriaIdInspeccion : 4,
-        DatabaseHelper.columnInAlcanceInspeccion : 4,
-        DatabaseHelper.columnInGenerarCitatorioInspeccion : 0,
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'CERRO AZUL No. 231, Interior N/A, Colonia JARDINES DE SAN JOAQUIN, C.P. 59617, ZAMORA, MICHOACAN.',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-05-01 16:30:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '221/000074/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 4,
+        DatabaseHelper.columnMateriaIdInspeccion: 4,
+        DatabaseHelper.columnInAlcanceInspeccion: 4,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 0,
       },
       {
-        DatabaseHelper.columnNormativaVersionIdInspeccion : 5,
-        DatabaseHelper.columnInCtRazonSocialInspeccion: 'LOGISTICA INTEGRAL DE LIMPIEZA DE LEON, S.A. DE C.V.',
-        DatabaseHelper.columnInDomicilioInspeccionInspeccion: 'MANUEL PRIEGO No. 3, Colonia RANCHO GRANDE, C.P. 36543, IRAPUATO, GUANAJUATO',
-        DatabaseHelper.columnInFecInspeccionInspeccion : '2023-05-18 11:00:00',
-        DatabaseHelper.columnInNumExpedienteInspeccion : '221/000072/2023',
-        DatabaseHelper.columnSubtipoInspeccionIdInspeccion : 5,
-        DatabaseHelper.columnMateriaIdInspeccion : 5,
-        DatabaseHelper.columnInAlcanceInspeccion : 5,
-        DatabaseHelper.columnInGenerarCitatorioInspeccion : 1,
+        DatabaseHelper.columnNormativaVersionIdInspeccion: 5,
+        DatabaseHelper.columnInCtRazonSocialInspeccion:
+            'LOGISTICA INTEGRAL DE LIMPIEZA DE LEON, S.A. DE C.V.',
+        DatabaseHelper.columnInDomicilioInspeccionInspeccion:
+            'MANUEL PRIEGO No. 3, Colonia RANCHO GRANDE, C.P. 36543, IRAPUATO, GUANAJUATO',
+        DatabaseHelper.columnInFecInspeccionInspeccion: '2023-05-18 11:00:00',
+        DatabaseHelper.columnInNumExpedienteInspeccion: '221/000072/2023',
+        DatabaseHelper.columnSubtipoInspeccionIdInspeccion: 5,
+        DatabaseHelper.columnMateriaIdInspeccion: 5,
+        DatabaseHelper.columnInAlcanceInspeccion: 5,
+        DatabaseHelper.columnInGenerarCitatorioInspeccion: 1,
       }
     ];
 
     for (var inspeccion in inspecciones) {
       await db.insert(tableInspeccion, inspeccion);
     }
-
   }
 
+  /// ************************************************************
+  ///                       CREDENCIALES
+  /// ************************************************************
+  // Inserta un registro en la tabla credenciales
+  Future<int?> insertCredencial(Map<String, dynamic> row) async {
+    Database? db = await instance.database;
+    return await db?.insert(tableCredenciales, row);
+  }
+
+  //Inserta un elemento a la tabla
+  Future<Credencial> createCredencial(Credencial credencial) async {
+    Database? db = await instance.database;
+    credencial.id = await db!.insert(
+      tableCredenciales,
+      credencial.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return credencial;
+  }
+
+  //Recupera un elemento de la lista por el id
+  Future<List<Map<String, dynamic>>> getCredencial(int id) async {
+    Database? db = await instance.database;
+    return db!
+        .query(tableCredenciales, where: 'id = ?', whereArgs: [id], limit: 1);
+  }
+
+  //Recupera un elemento de la lista por el usuario
+  Future<List<Map<String, dynamic>>> getCredencialByUsuario(
+      String usuario) async {
+    Database? db = await instance.database;
+    return db!.query(tableCredenciales,
+        where: 'usuario = ?', whereArgs: [usuario], limit: 1);
+  }
+
+  //Recupera un elemento de la lista por el userCoreId
+  Future<List<Map<String, dynamic>>> getCredencialByUserCoreId(
+      int userCoreId) async {
+    Database? db = await instance.database;
+    return db!.query(tableCredenciales,
+        where: 'user_core_id = ?', whereArgs: [userCoreId], limit: 1);
+  }
+
+  //Recupera la lista de elementos de la tabla
+  Future<List<Map<String, dynamic>>> getCredenciales() async {
+    Database? db = await instance.database;
+    return await db!.query(tableCredenciales);
+  }
+
+  //Borra un elemento de la tabla por el id
+  Future<int> deleteCredencial(int id) async {
+    Database? db = await instance.database;
+    return await db!
+        .delete(tableCredenciales, where: 'id = ?', whereArgs: [id]);
+  }
+
+  //Actualiza un elemento
+  Future<int> updateCredencial(Credencial credencial) async {
+    Database? db = await instance.database;
+    return await db!.update(tableCredenciales, credencial.toMap(),
+        where: 'id = ?', whereArgs: [credencial.id]);
+  }
+
+  //Cambia el atributo activo por el valor indicado a todos los elementos
+  void setCredencialesActivo(int activo) async {
+    Database? db = await instance.database;
+    db!.execute("UPDATE $tableCredenciales SET activo=$activo");
+  }
+
+  //Cambia el atributo activo por el valor indicado a un elemento
+  void setCredencialActivo(int? id, int activo) async {
+    Database? db = await instance.database;
+    if (id != null)
+      db!.execute("UPDATE $tableCredenciales SET activo=$activo WHERE id=$id");
+  }
+
+  /// ************************************************************
+  ///                           PERSONAS
+  /// ************************************************************
   // Inserta un registro en la tabla personas
   Future<int?> insert(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db?.insert(table, row);
+    return await db?.insert(tablePersonas, row);
   }
 
   // Inserta un registro en la tabla notificacion
@@ -403,10 +539,12 @@ class DatabaseHelper {
 
     return registro;
   }
+
   //actualiza un registro de la tabla notificacion
   Future<int?> updateNotificacion(int id, Map<String, dynamic> row) async {
     Database? db = await instance.database;
-   await db?.update(tableNotificacion, row, where: '$columnNotificacionId = ?', whereArgs: [id]);
+    await db?.update(tableNotificacion, row,
+        where: '$columnNotificacionId = ?', whereArgs: [id]);
     return id;
   }
 
@@ -422,7 +560,8 @@ class DatabaseHelper {
     Batch batch = db!.batch();
     for (var row in rows) {
       // Use the INSERT OR IGNORE statement to ignore any rows that would result in a conflict
-      batch.insert(tablePaises, row, conflictAlgorithm: ConflictAlgorithm.ignore);
+      batch.insert(tablePaises, row,
+          conflictAlgorithm: ConflictAlgorithm.ignore);
     }
     await batch.commit();
   }
@@ -453,5 +592,4 @@ class DatabaseHelper {
       whereArgs: [id],
     );
   }
-
 }

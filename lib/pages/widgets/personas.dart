@@ -24,7 +24,7 @@ class _PersonasListState extends State<PersonasList> {
 
     // Consulta todos los registros de la tabla personas
     List<Map<String, Object?>>? registros =
-        await db?.query(DatabaseHelper.table);
+        await db?.query(DatabaseHelper.tablePersonas);
 
     // Actualiza el estado del widget con los registros obtenidos
     setState(() {

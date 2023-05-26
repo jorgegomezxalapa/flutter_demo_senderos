@@ -1,8 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.demo_senderos">
+    package="com.example.air_senderos">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
-        android:label="demo_senderos"
+        android:label="air_senderos"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

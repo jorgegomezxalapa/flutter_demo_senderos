@@ -11,6 +11,8 @@ class Properties {
   final bool isLoading;
   final bool isAutorized;
   final bool haveCredentials;
+  final bool checkCredentials;
+  final String usuarioActivo;
 
   const Properties({
     required this.version,
@@ -18,6 +20,8 @@ class Properties {
     required this.isLoading,
     required this.isAutorized,
     required this.haveCredentials,
+    required this.checkCredentials,
+    required this.usuarioActivo,
   });
 
   Properties copyWith({
@@ -26,6 +30,8 @@ class Properties {
     bool? isLoading,
     bool? isAutorized,
     bool? haveCredentials,
+    bool? checkCredentials,
+    String? usuarioActivo,
   }) {
     return Properties(
       version: version ?? this.version,
@@ -33,6 +39,8 @@ class Properties {
       isLoading: isLoading ?? this.isLoading,
       isAutorized: isAutorized ?? this.isAutorized,
       haveCredentials: haveCredentials ?? this.haveCredentials,
+      checkCredentials: checkCredentials ?? this.checkCredentials,
+      usuarioActivo: usuarioActivo ?? this.usuarioActivo,
     );
   }
 
@@ -43,6 +51,8 @@ class Properties {
       'isLoading': isLoading,
       'isAutorized': isAutorized,
       'haveCredentials': haveCredentials,
+      'checkCredentials': checkCredentials,
+      'usuarioActivo': usuarioActivo,
     };
   }
 
@@ -53,6 +63,8 @@ class Properties {
       isLoading: map['isLoading'] as bool,
       isAutorized: map['isAutorized'] as bool,
       haveCredentials: map['haveCredentials'] as bool,
+      checkCredentials: map['checkCredentials'] as bool,
+      usuarioActivo: map['usuarioActivo'] as String,
     );
   }
 
@@ -63,7 +75,7 @@ class Properties {
 
   @override
   String toString() {
-    return 'Properties(version: $version, isOnline: $isOnline, isLoading: $isLoading, isAutorized: $isAutorized, haveCredentials: $haveCredentials)';
+    return 'Properties(version: $version, isOnline: $isOnline, isLoading: $isLoading, isAutorized: $isAutorized, haveCredentials: $haveCredentials, checkCredentials: $checkCredentials, usuarioActivo: $usuarioActivo)';
   }
 
   @override
@@ -74,7 +86,9 @@ class Properties {
         other.isOnline == isOnline &&
         other.isLoading == isLoading &&
         other.isAutorized == isAutorized &&
-        other.haveCredentials == haveCredentials;
+        other.haveCredentials == haveCredentials &&
+        other.checkCredentials == checkCredentials &&
+        other.usuarioActivo == usuarioActivo;
   }
 
   @override
@@ -83,7 +97,9 @@ class Properties {
         isOnline.hashCode ^
         isLoading.hashCode ^
         isAutorized.hashCode ^
-        haveCredentials.hashCode;
+        haveCredentials.hashCode ^
+        checkCredentials.hashCode ^
+        usuarioActivo.hashCode;
   }
 }
 
@@ -108,5 +124,13 @@ class PropertiesNotifier extends StateNotifier<Properties> {
 
   void setHaveCredentials(bool value) {
     state = state.copyWith(haveCredentials: value);
+  }
+
+  void setCheckCredentials(bool value) {
+    state = state.copyWith(checkCredentials: value);
+  }
+
+  void setUsuarioActivo(String value) {
+    state = state.copyWith(usuarioActivo: value);
   }
 }
