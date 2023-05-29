@@ -1,6 +1,6 @@
 {
-    "name": "demo_senderos",
-    "short_name": "demo_senderos",
+    "name": "air_senderos",
+    "short_name": "air_senderos",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

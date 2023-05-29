@@ -39,7 +39,7 @@ class LoginPage extends ConsumerWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(250, 35, 91, 78),
-        title: Text(AppLocalizations.of(context).appBar(version)),
+        title: Text(AppLocalizations.of(context)!.appBar(version)),
         actions: [
           Visibility(
             visible: haveCredentials,
@@ -96,7 +96,7 @@ class LoginPage extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    AppLocalizations.of(context).generalIniciarSesion,
+                    AppLocalizations.of(context)!.generalIniciarSesion,
                     style: titleText,
                   ),
                 ),
@@ -104,7 +104,7 @@ class LoginPage extends ConsumerWidget {
                   padding: const EdgeInsets.only(
                       left: 20, right: 20, top: 0, bottom: 20),
                   child: Text(
-                    AppLocalizations.of(context).generalAccede(version),
+                    AppLocalizations.of(context)!.generalAccede(version),
                     style: subtitleText,
                   ),
                 ),
