@@ -223,7 +223,7 @@ class ModuloInspeccionState extends State<ModuloInspeccion> {
                 return AppBar(
                   automaticallyImplyLeading: false,
                   backgroundColor: const Color.fromARGB(250, 35, 91, 78),
-                  title: Text(AppLocalizations.of(context).appBar(version)),
+                  title: Text(AppLocalizations.of(context)!.appBar(version)),
                   actions: [
                     Padding(
                       padding:
